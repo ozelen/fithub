@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "home",
+    "fitbot",
 ]
 
 MIDDLEWARE = [
@@ -56,7 +57,7 @@ ROOT_URLCONF = "labhub.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, 'labhub/templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -66,6 +67,9 @@ TEMPLATES = [
             ],
         },
     },
+]
+STATICFILES_DIRS = [
+    BASE_DIR / 'labhub/static/',
 ]
 
 WSGI_APPLICATION = "labhub.wsgi.application"

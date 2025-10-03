@@ -1,11 +1,25 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LabHub</title>
-</head>
-<body>
-    <h1>About LabHub</h1>
-    <p>LabHub is a platform for managing and sharing lab resources.</p>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<div class="p-3">
+    <div class="container">
+      <div class="row mt-3">
+        <div class="col-md-6 mx-auto mb-3">
+          <h2>About</h2>
+          <hr />
+          <p>
+            Lab Hub is a platform for managing and sharing lab resources.
+          </p>
+          <p>
+            
+          </p>
+        </div>
+        <div class="col-md-6 mx-auto mb-3 text-center">
+          <img src="{% static 'img/about.jpg' %}"
+               class="max-width-100"
+               alt="about" />
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
