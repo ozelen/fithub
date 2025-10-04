@@ -1,5 +1,5 @@
 def main():
-    print("Hello from labhub!")
+    print("Hello from fithub!")
 
 
 if __name__ == "__main__":
