@@ -41,10 +41,9 @@ RUN uv sync
 COPY . /app/
 
 RUN chmod +x /app/entrypoint.sh
-ENTRYPOINT ["/app/entrypoint.sh"]
- 
+
 # Expose the Django port
 EXPOSE 8000
- 
-# Run Django’s development server
-CMD ["uv", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+# Use entrypoint script as the entry point
+ENTRYPOINT ["/app/entrypoint.sh"]

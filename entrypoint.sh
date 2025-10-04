@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "⏳ Waiting for Postgres at ${DATABASE_HOST:-${PGHOST:-pgvector}}:${DATABASE_PORT:-${PGPORT:-5432}}…"
-until pg_isready -q -h "${DATABASE_HOST:-${PGHOST:-pgvector}}" -p "${DATABASE_PORT:-${PGPORT:-5432}}" -U "${DATABASE_USER:-${PGUSER:-postgres}}"; do
+echo "⏳ Waiting for Postgres at ${POSTGRES_HOST:-${DATABASE_HOST:-localhost}}:${POSTGRES_PORT:-${DATABASE_PORT:-5432}}…"
+until pg_isready -q -h "${POSTGRES_HOST:-${DATABASE_HOST:-localhost}}" -p "${POSTGRES_PORT:-${DATABASE_PORT:-5432}}" -U "${POSTGRES_USER:-${DATABASE_USER:-postgres}}"; do
   sleep 1
 done
 echo "✅ Postgres is up"
@@ -11,7 +11,7 @@ echo "✅ Postgres is up"
 echo "📁 Creating tiktoken cache directory in /dev/shm"
 mkdir -p "${TIKTOKEN_CACHE_DIR:-/dev/shm/tiktoken}" || echo "⚠️ Could not create tiktoken cache directory, continuing..."
 
-: "${DJANGO_SETTINGS_MODULE:=backend.settings}"
+: "${DJANGO_SETTINGS_MODULE:=fithub.settings}"
 
 # --- Migrations / seeding (leave as you had) ---
 if [[ "${ALLOW_MAKEMIGRATIONS:-0}" == "1" ]]; then
@@ -22,18 +22,7 @@ fi
 echo "📦 Running migrations"
 uv run manage.py migrate --noinput
 
-if [[ "${SEED_APP_SETTINGS:-0}" == "1" ]]; then
-  echo "🌱 Seeding default AppSettings"
-  uv run manage.py shell <<'PY'
-from users.models import AppSetting
-defaults = [
-  ("DJANGO_BASE_URL","http://localhost:8000"),
-]
-for k,v in defaults:
-    AppSetting.objects.get_or_create(key=k, defaults={"value": v})
-print("✅ AppSettings ready")
-PY
-fi
+# AppSettings seeding removed - no users.models.AppSetting in this project
 
 if [[ "${CREATE_SUPERUSER:-0}" == "1" ]]; then
   echo "👤 Ensuring superuser"
@@ -85,10 +74,10 @@ case "$SERVER" in
     echo "🚀 Starting Daphne (ASGI)"
     if [[ "${#DEBUGPY_PREFIX[@]}" -gt 0 ]]; then
       # debugpy -> then launch daphne via python -m daphne
-      exec "${DEBUGPY_PREFIX[@]}" -m daphne -b 0.0.0.0 -p "$DJANGO_PORT" backend.asgi:application
+      exec "${DEBUGPY_PREFIX[@]}" -m daphne -b 0.0.0.0 -p "$DJANGO_PORT" fithub.asgi:application
     else
       # no debugpy: still need 'python -m daphne'
-      exec python -m daphne -b 0.0.0.0 -p "$DJANGO_PORT" backend.asgi:application
+      exec python -m daphne -b 0.0.0.0 -p "$DJANGO_PORT" fithub.asgi:application
     fi
     ;;
 
@@ -98,10 +87,10 @@ case "$SERVER" in
     GUNI_THREADS="${GUNI_THREADS:-4}"
     EXTRA="${GUNI_EXTRA:---reload --timeout 120 --access-logfile - --error-logfile -}"
     if [[ "${DEBUGPY:-0}" == "1" ]]; then
-      exec "${DEBUGPY_PREFIX[@]}" -m gunicorn backend.wsgi:application --bind 0.0.0.0:"$DJANGO_PORT" \
+      exec "${DEBUGPY_PREFIX[@]}" -m gunicorn fithub.wsgi:application --bind 0.0.0.0:"$DJANGO_PORT" \
            --workers "$GUNI_WORKERS" --threads "$GUNI_THREADS" $EXTRA
     else
-      exec gunicorn backend.wsgi:application --bind 0.0.0.0:"$DJANGO_PORT" \
+      exec gunicorn fithub.wsgi:application --bind 0.0.0.0:"$DJANGO_PORT" \
            --workers "$GUNI_WORKERS" --threads "$GUNI_THREADS" $EXTRA
     fi
     ;;
