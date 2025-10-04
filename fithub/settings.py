@@ -24,12 +24,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-a2t89=*dt56_x3dkr#m)r=7cpjzd(=49l4&p64e7g)roo0*&*c"
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = ["*"]
+
+CORS_ALLOWED_ORIGINS = ["http://localhost:8080", "http://127.0.0.1:8080", "https://hub.zelen.uk"]
+
+CORS_ORIGIN_WHITELIST = (
+    'localhost:8080',
+    'localhost:8081',
+    'localhost',
+    'localhost:8888',
+    'hub.zelen.uk',
+)
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8080', 'https://hub.zelen.uk']
+
 
 
 # Application definition
