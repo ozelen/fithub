@@ -16,15 +16,15 @@ mkdir -p "${TIKTOKEN_CACHE_DIR:-/dev/shm/tiktoken}" || echo "⚠️ Could not cr
 # --- Migrations / seeding (leave as you had) ---
 if [[ "${ALLOW_MAKEMIGRATIONS:-0}" == "1" ]]; then
   echo "⚙️ Running makemigrations (dev/staging only)"
-  python manage.py makemigrations || true
+  uv run manage.py makemigrations || true
 fi
 
 echo "📦 Running migrations"
-python manage.py migrate --noinput
+uv run manage.py migrate --noinput
 
 if [[ "${SEED_APP_SETTINGS:-0}" == "1" ]]; then
   echo "🌱 Seeding default AppSettings"
-  python manage.py shell <<'PY'
+  uv run manage.py shell <<'PY'
 from users.models import AppSetting
 defaults = [
   ("DJANGO_BASE_URL","http://localhost:8000"),
@@ -37,7 +37,7 @@ fi
 
 if [[ "${CREATE_SUPERUSER:-0}" == "1" ]]; then
   echo "👤 Ensuring superuser"
-  python manage.py shell <<PY
+  uv run manage.py shell <<PY
 from django.contrib.auth import get_user_model
 User = get_user_model()
 email = "${DJANGO_SUPERUSER_EMAIL:-admin@example.com}"
@@ -109,9 +109,9 @@ case "$SERVER" in
   runserver|*)
     echo "🚀 Starting Django runserver"
     if [[ "${DEBUGPY:-0}" == "1" ]]; then
-      exec "${DEBUGPY_PREFIX[@]}" python manage.py runserver 0.0.0.0:"$DJANGO_PORT"
+      exec "${DEBUGPY_PREFIX[@]}" uv run manage.py runserver 0.0.0.0:"$DJANGO_PORT"
     else
-      exec python manage.py runserver 0.0.0.0:"$DJANGO_PORT"
+      exec uv run manage.py runserver 0.0.0.0:"$DJANGO_PORT"
     fi
     ;;
 esac
