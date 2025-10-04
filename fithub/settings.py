@@ -29,20 +29,14 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# ALLOWED_HOSTS = ["*"]
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:8080", "http://127.0.0.1:8080", "https://hub.zelen.uk"]
+CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:8080,http://127.0.0.1:8080,https://hub.zelen.uk').split(',')
 
-CORS_ORIGIN_WHITELIST = (
-    'localhost:8080',
-    'localhost:8081',
-    'localhost',
-    'localhost:8888',
-    'hub.zelen.uk',
-)
+CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST', 'localhost:8080,localhost:8081,localhost,localhost:8888,hub.zelen.uk').split(',')
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8080', 'https://hub.zelen.uk']
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost:8080,https://hub.zelen.uk').split(',')
 
 
 
