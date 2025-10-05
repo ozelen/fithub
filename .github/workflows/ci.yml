@@ -60,8 +60,8 @@ jobs:
     
     - name: Run security checks
       run: |
-        uv run bandit -r . -f json -o bandit-report.json || true
-        uv run safety check --json --output safety-report.json || true
+        timeout 300 uv run bandit -r . -f json -o bandit-report.json --exclude .venv,venv,__pycache__,.git || true
+        timeout 300 uv run safety check --json > safety-report.json || true
     
     - name: Upload security reports
       uses: actions/upload-artifact@v4

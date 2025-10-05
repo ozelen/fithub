@@ -35,8 +35,8 @@ format-check: ## Check code formatting
 	uv run isort --check-only .
 
 security: ## Run security checks
-	uv run bandit -r . -f json -o bandit-report.json
-	uv run safety check --json --output safety-report.json
+	uv run bandit -r . -f json -o bandit-report.json --exclude .venv,venv,__pycache__,.git
+	uv run safety check --json > safety-report.json
 
 migrate: ## Run database migrations
 	uv run manage.py migrate
