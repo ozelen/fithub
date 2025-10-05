@@ -23,16 +23,16 @@ test-ci-fast: ## Run tests for CI with SQLite (faster)
 	DJANGO_SETTINGS_MODULE=fithub.test_settings_sqlite uv run pytest --cov=. --cov-report=xml --cov-report=html
 
 lint: ## Run linting checks
-	uv run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-	uv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+	uv run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=.venv,venv,__pycache__,.git
+	uv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=.venv,venv,__pycache__,.git
 
 format: ## Format code with black and isort
-	uv run black .
-	uv run isort .
+	uv run black . --exclude=".venv|venv|__pycache__|.git"
+	uv run isort . --skip-glob=".venv/*" --skip-glob="venv/*" --skip-glob="__pycache__/*" --skip-glob=".git/*"
 
 format-check: ## Check code formatting
-	uv run black --check .
-	uv run isort --check-only .
+	uv run black --check . --exclude=".venv|venv|__pycache__|.git"
+	uv run isort --check-only . --skip-glob=".venv/*" --skip-glob="venv/*" --skip-glob="__pycache__/*" --skip-glob=".git/*"
 
 security: ## Run security checks
 	uv run bandit -r . -f json -o bandit-report.json

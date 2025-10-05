@@ -1,11 +1,12 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from .api import GoalViewSet, BodyMeasurementViewSet
+
+from .api import BodyMeasurementViewSet, GoalViewSet
 
 router = DefaultRouter()
-router.register(r'goals', GoalViewSet)
-router.register(r'measurements', BodyMeasurementViewSet)
+router.register(r"goals", GoalViewSet)
+router.register(r"measurements", BodyMeasurementViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]

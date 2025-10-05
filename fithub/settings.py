@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -24,20 +25,31 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key-for-development-only-change-in-production')
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "django-insecure-fallback-key-for-development-only-change-in-production",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 # ALLOWED_HOSTS = ["*"]
 
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:8080,http://127.0.0.1:8080,https://hub.zelen.uk').split(',')
+CORS_ALLOWED_ORIGINS = os.environ.get(
+    "CORS_ALLOWED_ORIGINS",
+    "http://localhost:8080,http://127.0.0.1:8080,https://hub.zelen.uk",
+).split(",")
 
-CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST', 'localhost:8080,localhost:8081,localhost,localhost:8888,hub.zelen.uk').split(',')
+CORS_ORIGIN_WHITELIST = os.environ.get(
+    "CORS_ORIGIN_WHITELIST",
+    "localhost:8080,localhost:8081,localhost,localhost:8888,hub.zelen.uk",
+).split(",")
 
-CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost:8000,http://127.0.0.1:8000,https://hub.zelen.uk').split(',')
-
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    "CSRF_TRUSTED_ORIGINS",
+    "http://localhost:8000,http://127.0.0.1:8000,https://hub.zelen.uk",
+).split(",")
 
 
 # Application definition
@@ -75,7 +87,7 @@ ROOT_URLCONF = "fithub.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, 'fithub/templates')],
+        "DIRS": [os.path.join(BASE_DIR, "fithub/templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -88,7 +100,7 @@ TEMPLATES = [
     },
 ]
 STATICFILES_DIRS = [
-    BASE_DIR / 'fithub/static/',
+    BASE_DIR / "fithub/static/",
 ]
 
 WSGI_APPLICATION = "fithub.wsgi.application"
@@ -100,11 +112,11 @@ WSGI_APPLICATION = "fithub.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get('POSTGRES_DB'),
-        "USER": os.environ.get('POSTGRES_USER'),
-        "PASSWORD": os.environ.get('POSTGRES_PASSWORD'),
-        "HOST": os.environ.get('POSTGRES_HOST'),
-        "PORT": os.environ.get('POSTGRES_PORT'),
+        "NAME": os.environ.get("POSTGRES_DB"),
+        "USER": os.environ.get("POSTGRES_USER"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+        "HOST": os.environ.get("POSTGRES_HOST"),
+        "PORT": os.environ.get("POSTGRES_PORT"),
     }
 }
 
@@ -152,37 +164,37 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # REST Framework Configuration
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,
-    'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend',
-        'rest_framework.filters.SearchFilter',
-        'rest_framework.filters.OrderingFilter',
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
     ],
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
     ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # drf-spectacular Configuration
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'FitHub API',
-    'DESCRIPTION': 'A comprehensive fitness and nutrition tracking API',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-    'COMPONENT_SPLIT_REQUEST': True,
-    'SCHEMA_PATH_PREFIX': '/api/',
-    'TAGS': [
-        {'name': 'Nutrition', 'description': 'Diet, meal, and ingredient management'},
-        {'name': 'Goals', 'description': 'Goal tracking and body measurements'},
+    "TITLE": "FitHub API",
+    "DESCRIPTION": "A comprehensive fitness and nutrition tracking API",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SCHEMA_PATH_PREFIX": "/api/",
+    "TAGS": [
+        {"name": "Nutrition", "description": "Diet, meal, and ingredient management"},
+        {"name": "Goals", "description": "Goal tracking and body measurements"},
     ],
 }
