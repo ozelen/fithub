@@ -12,7 +12,7 @@ class Diet(models.Model):
     day_carbohydrates_g = models.FloatField()
     day_calories_kcal = models.FloatField()
     is_active = models.BooleanField(default=False)
-    start_date = models.DateField(default=timezone.now)
+    start_date = models.DateField(default=lambda: timezone.now().date())
     end_date = models.DateField(null=True, blank=True)
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

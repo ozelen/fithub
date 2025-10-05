@@ -40,8 +40,10 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class DietSerializer(serializers.ModelSerializer):
     goal = GoalSerializer(read_only=True)
-    goal_id = serializers.IntegerField(write_only=True)
+    goal_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     user = UserSerializer(read_only=True)
+    start_date = serializers.DateField(required=False)
+    end_date = serializers.DateField(required=False, allow_null=True)
     
     class Meta:
         model = Diet
@@ -66,14 +68,17 @@ class MealIngredientSerializer(serializers.ModelSerializer):
 
 class MealSerializer(serializers.ModelSerializer):
     diet = DietSerializer(read_only=True)
-    diet_id = serializers.IntegerField(write_only=True)
+    diet_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     ingredients = MealIngredientSerializer(many=True, read_only=True)
+    start_date = serializers.DateField(required=False, allow_null=True)
+    end_date = serializers.DateField(required=False, allow_null=True)
+    recurrence_until = serializers.DateField(required=False, allow_null=True)
     
     class Meta:
         model = Meal
         fields = [
             'id', 'name', 'description', 'diet', 'diet_id',
-            'ingredients', 'is_scheduled', 'start_date', 'start_time', 'duration_minutes',
+            'ingredients', 'is_scheduled', 'start_date', 'end_date', 'start_time', 'duration_minutes',
             'recurrence_type', 'recurrence_until', 'meal_type', 'created_at', 'updated_at'
         ]
 
