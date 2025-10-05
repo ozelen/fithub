@@ -413,6 +413,221 @@ FitHub is a Django REST Framework API for fitness and nutrition tracking. The pr
 - **Code Quality**: Automated formatting, linting, and security scanning
 - **CI/CD**: Automated testing and deployment pipeline
 
+### 🤖 AI Development Guidelines
+
+#### 1. Follow the Documentation
+
+**CRITICAL**: Always read and follow the existing documentation before making changes:
+
+- **📚 [Architecture](ARCHITECTURE.md)**: Understand system design, dependencies, and data models
+- **🔌 [API Reference](API.md)**: Follow API patterns and authentication methods
+- **👨‍💻 [Development Guide](DEVELOPMENT.md)**: Follow coding standards and workflow
+- **🚀 [Deployment](DEPLOYMENT.md)**: Understand deployment requirements
+- **📊 [ER Diagram](ER_DIAGRAM.md)**: Understand database relationships
+
+**Before starting any task:**
+1. Read relevant documentation sections
+2. Understand existing patterns and conventions
+3. Check similar implementations in the codebase
+4. Follow established naming conventions and structures
+
+#### 2. Make Atomic Feature-Based Commits
+
+**Commit Strategy:**
+- **One feature per commit**: Each commit should implement a single, complete feature
+- **Descriptive commit messages**: Use conventional commit format
+- **Include tests**: Every feature commit must include relevant tests
+- **Update documentation**: Update docs if the feature affects API or architecture
+
+**Commit Message Format:**
+```
+type(scope): brief description
+
+Detailed explanation of what was implemented:
+- Feature 1
+- Feature 2
+- Tests added
+- Documentation updated
+
+Closes #issue-number (if applicable)
+```
+
+**Examples:**
+```bash
+# Good: Single feature with tests
+git commit -m "feat(nutrition): add meal scheduling with recurrence
+
+- Add recurrence_type field to Meal model
+- Implement daily, weekly, and custom recurrence patterns
+- Add recurrence validation in MealSerializer
+- Add tests for all recurrence types
+- Update API documentation with scheduling examples"
+
+# Good: Bug fix with test
+git commit -m "fix(goals): correct body measurement calculation
+
+- Fix BMI calculation formula in BodyMeasurement model
+- Add validation for measurement values
+- Add tests for edge cases (zero weight, negative values)
+- Update API docs with calculation examples"
+
+# Bad: Multiple unrelated changes
+git commit -m "fix various issues and add new features"
+```
+
+#### 3. Pre-Feature Workflow
+
+**Before starting any new feature:**
+
+1. **Commit Current Changes**
+   ```bash
+   # Stage all changes
+   git add .
+   
+   # Commit with descriptive message
+   git commit -m "feat(scope): implement current feature"
+   
+   # Push to current branch
+   git push origin current-branch
+   ```
+
+2. **Pull and Rebase Latest Changes**
+   ```bash
+   # Switch to main branch
+   git checkout main
+   
+   # Pull latest changes
+   git pull origin main
+   
+   # Switch back to feature branch
+   git checkout feature-branch
+   
+   # Rebase on latest main
+   git rebase main
+   
+   # Resolve any conflicts if they occur
+   # git add . && git rebase --continue
+   ```
+
+3. **Verify Everything Works**
+   ```bash
+   # Run tests to ensure nothing is broken
+   make test-fast
+   
+   # Run linting and formatting
+   make format
+   make lint
+   ```
+
+4. **Start New Feature**
+   ```bash
+   # Create new feature branch from main
+   git checkout main
+   git checkout -b feature/new-feature-name
+   ```
+
+#### 4. Code Quality Requirements
+
+**Every commit must pass:**
+- ✅ **Tests**: All tests must pass (`make test-fast`)
+- ✅ **Linting**: Code must pass flake8 checks (`make lint`)
+- ✅ **Formatting**: Code must be properly formatted (`make format`)
+- ✅ **Security**: Security analysis must pass (`make security`)
+
+**Pre-commit hooks will enforce these automatically.**
+
+#### 5. Testing Requirements
+
+**For every feature:**
+- Add unit tests for new functionality
+- Add integration tests for API endpoints
+- Test edge cases and error conditions
+- Ensure test coverage doesn't decrease
+- Use factory-boy for test data generation
+
+**Test Structure:**
+```python
+def test_feature_name(self):
+    """Test description of what this test verifies"""
+    # Arrange: Set up test data
+    user = UserFactory()
+    # Act: Perform the action
+    response = self.client.post(url, data)
+    # Assert: Verify the result
+    self.assertEqual(response.status_code, 201)
+```
+
+#### 6. Documentation Updates
+
+**Update documentation when:**
+- Adding new API endpoints
+- Changing existing API behavior
+- Adding new dependencies
+- Modifying architecture or data models
+- Adding new development workflows
+
+**Documentation files to consider:**
+- `docs/API.md` - API endpoint changes
+- `docs/ARCHITECTURE.md` - System changes
+- `docs/DEVELOPMENT.md` - Workflow changes
+- `README.md` - Major feature additions
+
+#### 7. Error Handling
+
+**Always handle errors gracefully:**
+- Use appropriate HTTP status codes
+- Provide meaningful error messages
+- Log errors for debugging
+- Add tests for error conditions
+
+**Example:**
+```python
+try:
+    # Operation that might fail
+    result = perform_operation()
+    return Response(result, status=status.HTTP_200_OK)
+except ValidationError as e:
+    return Response(
+        {'error': 'Validation failed', 'details': str(e)},
+        status=status.HTTP_400_BAD_REQUEST
+    )
+except Exception as e:
+    logger.error(f"Unexpected error: {e}")
+    return Response(
+        {'error': 'Internal server error'},
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+    )
+```
+
+#### 8. Security Considerations
+
+**Always consider security:**
+- Validate all user input
+- Use proper authentication and authorization
+- Sanitize data before database operations
+- Follow Django security best practices
+- Add security tests for sensitive operations
+
+#### 9. Performance Considerations
+
+**Optimize for performance:**
+- Use database queries efficiently (avoid N+1 problems)
+- Add database indexes for frequently queried fields
+- Use pagination for large datasets
+- Consider caching for expensive operations
+- Profile and test performance-critical code
+
+#### 10. AI-Specific Best Practices
+
+**When working on this project:**
+- **Read first, code second**: Always understand existing patterns
+- **Ask for clarification**: If requirements are unclear, ask questions
+- **Propose solutions**: Explain your approach before implementing
+- **Test thoroughly**: Don't assume code works without testing
+- **Document decisions**: Explain why you chose a particular approach
+- **Follow conventions**: Match existing code style and patterns
+- **Be atomic**: Make small, focused changes that are easy to review
+
 ### 🏗️ Architecture Patterns
 
 #### Django App Structure
