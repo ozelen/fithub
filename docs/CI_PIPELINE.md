@@ -151,8 +151,15 @@ flowchart TD
 ## 🛠️ Pipeline Configuration Details
 
 ### Trigger Conditions
+
+#### Release CI (ci.yml)
+- **Tag Push Events**: Semantic version tags matching `v*.*.*` pattern (e.g., v1.0.0, v2.1.3)
+- **Purpose**: Full release pipeline with Docker image building and deployment
+
+#### Development CI (dev.yml)
 - **Push Events**: `main` and `develop` branches
 - **Pull Request Events**: Targeting `main` and `develop` branches
+- **Purpose**: Code quality checks, testing, and development Docker builds
 
 ### Job Dependencies
 ```yaml
@@ -244,17 +251,46 @@ Stage 4 (Conditional):
 
 ## 🚀 Deployment Strategy
 
+### Release Process
+
+#### Creating a Release
+1. **Create and push a semantic version tag:**
+   ```bash
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
+
+2. **Automatic Pipeline Execution:**
+   - Release CI (ci.yml) automatically triggers
+   - Runs full pipeline: lint → security → test → build → deploy
+   - Builds and pushes Docker images with multiple tags
+   - **`latest` tag is automatically updated** to the new version
+
+#### Docker Image Tags Created
+For tag `v1.0.0`, the following tags are automatically created:
+- `zelenuk/fithub:latest` ← **Automatically updated**
+- `zelenuk/fithub:1.0.0` ← Exact version
+- `zelenuk/fithub:1.0` ← Major.minor
+- `zelenuk/fithub:1` ← Major version
+
 ### Branch Strategy
-- **main**: Production branch (auto-deploy on push)
-- **develop**: Development branch (build and test only)
-- **feature/***: Feature branches (build and test only)
+- **main**: Development branch (runs dev.yml for testing)
+- **develop**: Development branch (runs dev.yml for testing)
+- **feature/***: Feature branches (runs dev.yml for testing)
+- **v*.*.* tags**: Release triggers (runs ci.yml for full release)
 
 ### Image Tagging Strategy
-- **latest**: Latest main branch build
-- **main**: Current main branch
-- **develop**: Current develop branch
-- **pr-{number}**: Pull request builds
-- **semver**: Semantic version tags
+
+#### Release CI (ci.yml) - Tag-based builds
+- **latest**: Always updated to the latest tag (automatic)
+- **{version}**: Exact semantic version (e.g., 1.0.0)
+- **{major}.{minor}**: Major.minor version (e.g., 1.0)
+- **{major}**: Major version only (e.g., 1)
+
+#### Development CI (dev.yml) - Branch-based builds
+- **main**: Current main branch build
+- **develop**: Current develop branch build
+- **dev**: Development build tag
 
 ### Rollback Strategy
 - **Automatic**: Failed deployments don't proceed
