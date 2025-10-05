@@ -61,8 +61,6 @@ class BodyMeasurementFactory(DjangoModelFactory):
             "bmi_value",
         ],
     )
-    measurement_type = factory.Faker(
-        "random_element", elements=["target", "baseline", "log"]
-    )
+    measurement_type = factory.Faker("random_element", elements=["target", "baseline", "log"])
     value = factory.Faker("pyfloat", min_value=1, max_value=200, right_digits=2)
     timestamp = factory.Faker("date_time_this_month")

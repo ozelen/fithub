@@ -3,8 +3,7 @@ from rest_framework import serializers
 
 from goals.models import Goal
 
-from .models import (Category, Diet, Ingredient, Meal, MealIngredient,
-                     MealPreference, MealRecord)
+from .models import Category, Diet, Ingredient, Meal, MealIngredient, MealPreference, MealRecord
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -27,9 +26,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class IngredientSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
-    category_id = serializers.IntegerField(
-        write_only=True, required=False, allow_null=True
-    )
+    category_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
 
     class Meta:
         model = Ingredient

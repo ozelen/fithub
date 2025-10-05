@@ -41,9 +41,7 @@ class Goal(models.Model):
             "notes": self.notes,
             "created_at": self.created_at.isoformat(),  # type: ignore
             "updated_at": self.updated_at.isoformat(),  # type: ignore
-            "days_remaining": (
-                (self.target_date - date.today()).days if self.target_date else None
-            ),
+            "days_remaining": ((self.target_date - date.today()).days if self.target_date else None),
         }
 
     @property

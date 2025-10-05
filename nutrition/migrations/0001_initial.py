@@ -95,9 +95,7 @@ class Migration(migrations.Migration):
                 ("description", models.TextField(blank=True, null=True)),
                 (
                     "is_personal",
-                    models.BooleanField(
-                        default=False, help_text="Personal ingredient created by user"
-                    ),
+                    models.BooleanField(default=False, help_text="Personal ingredient created by user"),
                 ),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
@@ -139,9 +137,7 @@ class Migration(migrations.Migration):
                 ("start_date", models.DateField(blank=True, null=True)),
                 (
                     "end_date",
-                    models.DateField(
-                        blank=True, help_text="End date for recurrent meals", null=True
-                    ),
+                    models.DateField(blank=True, help_text="End date for recurrent meals", null=True),
                 ),
                 ("start_time", models.TimeField(blank=True, null=True)),
                 ("duration_minutes", models.IntegerField(default=30)),
@@ -188,9 +184,7 @@ class Migration(migrations.Migration):
                 ("updated_at", models.DateTimeField(auto_now=True)),
                 (
                     "diet",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="nutrition.diet"
-                    ),
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="nutrition.diet"),
                 ),
             ],
         ),
@@ -220,9 +214,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "meal",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="nutrition.meal"
-                    ),
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="nutrition.meal"),
                 ),
             ],
         ),

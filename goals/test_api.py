@@ -154,9 +154,7 @@ class GoalsAPITestCase(APITestCase):
             value=80.0,
             timestamp=timezone.now() - timedelta(days=30),
         )
-        measurement2 = BodyMeasurementFactory(
-            user=self.user, metric="weight_kg", value=75.0, timestamp=timezone.now()
-        )
+        measurement2 = BodyMeasurementFactory(user=self.user, metric="weight_kg", value=75.0, timestamp=timezone.now())
 
         url = reverse("goal-progress", kwargs={"pk": goal.id})
         response = self.client.get(url)
@@ -213,14 +211,10 @@ class GoalsAPITestCase(APITestCase):
         weight_measurement_latest = BodyMeasurementFactory(
             user=self.user, metric="weight_kg", value=74.5, timestamp=timezone.now()
         )
-        body_fat_measurement = BodyMeasurementFactory(
-            user=self.user, metric="body_fat_percentage", value=15.0
-        )
+        body_fat_measurement = BodyMeasurementFactory(user=self.user, metric="body_fat_percentage", value=15.0)
 
         url = reverse("bodymeasurement-latest")
-        response = self.client.get(
-            url, {"metrics": ["weight_kg", "body_fat_percentage"]}
-        )
+        response = self.client.get(url, {"metrics": ["weight_kg", "body_fat_percentage"]})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
@@ -231,15 +225,9 @@ class GoalsAPITestCase(APITestCase):
 
     def test_body_measurement_by_metric(self):
         """Test getting measurements by specific metric"""
-        weight_measurement1 = BodyMeasurementFactory(
-            user=self.user, metric="weight_kg", value=75.0
-        )
-        weight_measurement2 = BodyMeasurementFactory(
-            user=self.user, metric="weight_kg", value=74.5
-        )
-        body_fat_measurement = BodyMeasurementFactory(
-            user=self.user, metric="body_fat_percentage", value=15.0
-        )
+        weight_measurement1 = BodyMeasurementFactory(user=self.user, metric="weight_kg", value=75.0)
+        weight_measurement2 = BodyMeasurementFactory(user=self.user, metric="weight_kg", value=74.5)
+        body_fat_measurement = BodyMeasurementFactory(user=self.user, metric="body_fat_percentage", value=15.0)
 
         url = reverse("bodymeasurement-by-metric")
         response = self.client.get(url, {"metric": "weight_kg"})
@@ -271,12 +259,8 @@ class GoalsAPITestCase(APITestCase):
 
     def test_body_measurement_summary(self):
         """Test getting measurement summary for all metrics"""
-        weight_measurement = BodyMeasurementFactory(
-            user=self.user, metric="weight_kg", value=75.0
-        )
-        body_fat_measurement = BodyMeasurementFactory(
-            user=self.user, metric="body_fat_percentage", value=15.0
-        )
+        weight_measurement = BodyMeasurementFactory(user=self.user, metric="weight_kg", value=75.0)
+        body_fat_measurement = BodyMeasurementFactory(user=self.user, metric="body_fat_percentage", value=15.0)
 
         url = reverse("bodymeasurement-summary")
         response = self.client.get(url)
@@ -370,20 +354,12 @@ class GoalsAPITestCase(APITestCase):
 
     def test_ordering(self):
         """Test ordering functionality"""
-        goal1 = GoalFactory(
-            user=self.user, target_date=date.today() + timedelta(days=30)
-        )
-        goal2 = GoalFactory(
-            user=self.user, target_date=date.today() + timedelta(days=10)
-        )
+        goal1 = GoalFactory(user=self.user, target_date=date.today() + timedelta(days=30))
+        goal2 = GoalFactory(user=self.user, target_date=date.today() + timedelta(days=10))
 
         url = reverse("goal-list")
         response = self.client.get(url, {"ordering": "target_date"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            response.data["results"][0]["target_date"], goal2.target_date.isoformat()
-        )
-        self.assertEqual(
-            response.data["results"][1]["target_date"], goal1.target_date.isoformat()
-        )
+        self.assertEqual(response.data["results"][0]["target_date"], goal2.target_date.isoformat())
+        self.assertEqual(response.data["results"][1]["target_date"], goal1.target_date.isoformat())

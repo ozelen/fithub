@@ -1,9 +1,15 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .api import (CategoryViewSet, DietViewSet, IngredientViewSet,
-                  MealIngredientViewSet, MealPreferenceViewSet,
-                  MealRecordViewSet, MealViewSet)
+from .api import (
+    CategoryViewSet,
+    DietViewSet,
+    IngredientViewSet,
+    MealIngredientViewSet,
+    MealPreferenceViewSet,
+    MealRecordViewSet,
+    MealViewSet,
+)
 
 router = DefaultRouter()
 router.register(r"diets", DietViewSet)

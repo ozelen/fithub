@@ -3,8 +3,7 @@ from django.contrib.auth.models import User
 from factory.django import DjangoModelFactory
 from faker import Faker
 
-from .models import (Category, Diet, Ingredient, Meal, MealIngredient,
-                     MealPreference, MealRecord)
+from .models import Category, Diet, Ingredient, Meal, MealIngredient, MealPreference, MealRecord
 
 fake = Faker()
 
@@ -50,16 +49,10 @@ class DietFactory(DjangoModelFactory):
 
     name = factory.Faker("sentence", nb_words=3)
     user = factory.SubFactory(UserFactory)
-    day_proteins_g = factory.Faker(
-        "pyfloat", min_value=50, max_value=200, right_digits=2
-    )
+    day_proteins_g = factory.Faker("pyfloat", min_value=50, max_value=200, right_digits=2)
     day_fats_g = factory.Faker("pyfloat", min_value=30, max_value=100, right_digits=2)
-    day_carbohydrates_g = factory.Faker(
-        "pyfloat", min_value=100, max_value=400, right_digits=2
-    )
-    day_calories_kcal = factory.Faker(
-        "pyfloat", min_value=1500, max_value=3000, right_digits=2
-    )
+    day_carbohydrates_g = factory.Faker("pyfloat", min_value=100, max_value=400, right_digits=2)
+    day_calories_kcal = factory.Faker("pyfloat", min_value=1500, max_value=3000, right_digits=2)
     is_active = False
     start_date = factory.Faker("date_this_year")
     end_date = None

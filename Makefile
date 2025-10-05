@@ -27,12 +27,12 @@ lint: ## Run linting checks
 	uv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=.venv,venv,__pycache__,.git
 
 format: ## Format code with black and isort
-	uv run black . --exclude=".venv|venv|__pycache__|.git"
-	uv run isort . --skip-glob=".venv/*" --skip-glob="venv/*" --skip-glob="__pycache__/*" --skip-glob=".git/*"
+	uv run black .
+	uv run isort .
 
 format-check: ## Check code formatting
-	uv run black --check . --exclude=".venv|venv|__pycache__|.git"
-	uv run isort --check-only . --skip-glob=".venv/*" --skip-glob="venv/*" --skip-glob="__pycache__/*" --skip-glob=".git/*"
+	uv run black --check .
+	uv run isort --check-only .
 
 security: ## Run security checks
 	uv run bandit -r . -f json -o bandit-report.json

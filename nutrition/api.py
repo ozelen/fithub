@@ -5,12 +5,17 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import (Category, Diet, Ingredient, Meal, MealIngredient,
-                     MealPreference, MealRecord)
-from .serializers import (CategorySerializer, DietSerializer,
-                          IngredientSearchSerializer, IngredientSerializer,
-                          MealIngredientSerializer, MealPreferenceSerializer,
-                          MealRecordSerializer, MealSerializer)
+from .models import Category, Diet, Ingredient, Meal, MealIngredient, MealPreference, MealRecord
+from .serializers import (
+    CategorySerializer,
+    DietSerializer,
+    IngredientSearchSerializer,
+    IngredientSerializer,
+    MealIngredientSerializer,
+    MealPreferenceSerializer,
+    MealRecordSerializer,
+    MealSerializer,
+)
 
 
 class DietViewSet(viewsets.ModelViewSet):
@@ -50,9 +55,7 @@ class DietViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(active_diet)
             return Response(serializer.data)
         except Diet.DoesNotExist:
-            return Response(
-                {"error": "No active diet found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "No active diet found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class MealViewSet(viewsets.ModelViewSet):
@@ -98,18 +101,9 @@ class MealViewSet(viewsets.ModelViewSet):
         meal = self.get_object()
         total_calories = meal.get_total_calories()
         # Calculate other macros
-        total_proteins = sum(
-            (mi.quantity / 100) * mi.ingredient.proteins
-            for mi in meal.mealingredient_set.all()
-        )
-        total_fats = sum(
-            (mi.quantity / 100) * mi.ingredient.fats
-            for mi in meal.mealingredient_set.all()
-        )
-        total_carbs = sum(
-            (mi.quantity / 100) * mi.ingredient.carbs
-            for mi in meal.mealingredient_set.all()
-        )
+        total_proteins = sum((mi.quantity / 100) * mi.ingredient.proteins for mi in meal.mealingredient_set.all())
+        total_fats = sum((mi.quantity / 100) * mi.ingredient.fats for mi in meal.mealingredient_set.all())
+        total_carbs = sum((mi.quantity / 100) * mi.ingredient.carbs for mi in meal.mealingredient_set.all())
 
         return Response(
             {
@@ -138,9 +132,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         # Show both public ingredients and user's personal ingredients
-        return Ingredient.objects.filter(
-            Q(is_personal=False) | Q(created_by=self.request.user)
-        )
+        return Ingredient.objects.filter(Q(is_personal=False) | Q(created_by=self.request.user))
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user, is_personal=True)
@@ -155,18 +147,14 @@ class IngredientViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        ingredients = Ingredient.objects.filter(
-            Q(name__icontains=query) | Q(description__icontains=query)
-        )[:10]
+        ingredients = Ingredient.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))[:10]
         serializer = IngredientSearchSerializer(ingredients, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=["get"])
     def personal(self, request):
         """Get user's personal ingredients"""
-        ingredients = Ingredient.objects.filter(
-            created_by=request.user, is_personal=True
-        )
+        ingredients = Ingredient.objects.filter(created_by=request.user, is_personal=True)
         serializer = self.get_serializer(ingredients, many=True)
         return Response(serializer.data)
 
@@ -230,9 +218,7 @@ class MealRecordViewSet(viewsets.ModelViewSet):
         end_date = timezone.now().date()
         start_date = end_date - timedelta(days=days)
 
-        records = MealRecord.objects.filter(
-            user=request.user, timestamp__date__range=[start_date, end_date]
-        )
+        records = MealRecord.objects.filter(user=request.user, timestamp__date__range=[start_date, end_date])
 
         total_calories = sum(record.get_total_calories() for record in records)
         total_proteins = sum(record.get_total_proteins() for record in records)
@@ -278,9 +264,7 @@ class MealPreferenceViewSet(viewsets.ModelViewSet):
         """Get preferences grouped by type"""
         preference_type = request.query_params.get("type")
         if preference_type:
-            preferences = MealPreference.objects.filter(
-                user=request.user, preference_type=preference_type
-            )
+            preferences = MealPreference.objects.filter(user=request.user, preference_type=preference_type)
         else:
             preferences = MealPreference.objects.filter(user=request.user)
 

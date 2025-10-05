@@ -2,11 +2,16 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
-from .factories import (DietFactory, IngredientFactory,
-                        MealFactory, MealIngredientFactory,
-                        MealPreferenceFactory, MealRecordFactory, UserFactory)
-from .models import (Diet, MealIngredient,
-                     MealPreference, MealRecord)
+from .factories import (
+    DietFactory,
+    IngredientFactory,
+    MealFactory,
+    MealIngredientFactory,
+    MealPreferenceFactory,
+    MealRecordFactory,
+    UserFactory,
+)
+from .models import Diet, MealIngredient, MealPreference, MealRecord
 
 
 class NutritionAPITestCase(APITestCase):
@@ -186,9 +191,7 @@ class NutritionAPITestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["period_days"], 7)
-        self.assertEqual(
-            response.data["total_calories"], 2800
-        )  # Sum of 100+200+...+700
+        self.assertEqual(response.data["total_calories"], 2800)  # Sum of 100+200+...+700
         self.assertEqual(response.data["record_count"], 7)
 
     def test_meal_preference_by_type(self):
