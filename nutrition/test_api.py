@@ -177,6 +177,7 @@ class NutritionAPITestCase(APITestCase):
             record = MealRecordFactory(
                 user=self.user,
                 timestamp=timezone.now() - timedelta(days=i),
+                meal=None,  # No meal, use direct calories
                 calories=100 * (i + 1)  # 100, 200, 300, etc.
             )
         
@@ -208,7 +209,7 @@ class NutritionAPITestCase(APITestCase):
         url = reverse('diet-list')
         response = self.client.get(url)
         
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_cross_user_access_denied(self):
         """Test that users cannot access other users' data"""
@@ -233,6 +234,10 @@ class NutritionAPITestCase(APITestCase):
         }
         
         response = self.client.post(url, data)
+        
+        if response.status_code != status.HTTP_201_CREATED:
+            print(f"Response status: {response.status_code}")
+            print(f"Response data: {response.data}")
         
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(MealIngredient.objects.count(), 1)

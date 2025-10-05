@@ -232,10 +232,9 @@ class BodyMeasurementViewSet(viewsets.ModelViewSet):
         created_measurements = []
         
         for measurement_data in measurements_data:
-            measurement_data['user'] = request.user.id
             serializer = self.get_serializer(data=measurement_data)
             if serializer.is_valid():
-                measurement = serializer.save()
+                measurement = serializer.save(user=request.user)
                 created_measurements.append(measurement)
             else:
                 return Response(

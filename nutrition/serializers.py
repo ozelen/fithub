@@ -64,6 +64,12 @@ class MealIngredientSerializer(serializers.ModelSerializer):
             'id', 'meal', 'ingredient', 'ingredient_id', 'barcode',
             'quantity', 'unit', 'created_at', 'updated_at'
         ]
+    
+    def create(self, validated_data):
+        ingredient_id = validated_data.pop('ingredient_id')
+        ingredient = Ingredient.objects.get(id=ingredient_id)
+        validated_data['ingredient'] = ingredient
+        return super().create(validated_data)
 
 
 class MealSerializer(serializers.ModelSerializer):

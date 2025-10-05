@@ -71,9 +71,11 @@ class MealViewSet(viewsets.ModelViewSet):
     def add_ingredient(self, request, pk=None):
         """Add an ingredient to a meal"""
         meal = self.get_object()
-        serializer = MealIngredientSerializer(data=request.data)
+        data = request.data.copy()
+        data['meal'] = meal.id
+        serializer = MealIngredientSerializer(data=data)
         if serializer.is_valid():
-            serializer.save(meal=meal)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
