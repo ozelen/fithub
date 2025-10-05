@@ -1,0 +1,533 @@
+# FitHub Development Guide
+
+## 👥 For Human Developers
+
+### 🚀 Quick Start
+
+1. **Clone and Setup**
+   ```bash
+   git clone <repository-url>
+   cd fithub
+   uv sync --extra test
+   ```
+
+2. **Environment Setup**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your database credentials
+   ```
+
+3. **Database Setup**
+   ```bash
+   createdb fithub
+   uv run manage.py migrate
+   uv run manage.py createsuperuser
+   ```
+
+4. **Run Development Server**
+   ```bash
+   uv run manage.py runserver
+   ```
+
+### 🛠️ Development Workflow
+
+#### Daily Development Commands
+
+```bash
+# Start development
+make install          # Install dependencies
+make migrate          # Run migrations
+uv run manage.py runserver  # Start server
+
+# Code quality
+make format           # Format code
+make lint             # Check code quality
+make security         # Security checks
+
+# Testing
+make test-fast        # Quick SQLite tests
+make test             # Full PostgreSQL tests
+make test-ci          # CI-style tests with coverage
+```
+
+#### Git Workflow
+
+1. **Create Feature Branch**
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+
+2. **Make Changes and Test**
+   ```bash
+   make format
+   make test
+   ```
+
+3. **Commit and Push**
+   ```bash
+   git add .
+   git commit -m "Add amazing feature"
+   git push origin feature/amazing-feature
+   ```
+
+4. **Create Pull Request**
+   - All CI checks must pass
+   - Code review required
+   - Update documentation if needed
+
+### 🏗️ Adding New Features
+
+#### 1. Create New Django App
+```bash
+uv run manage.py startapp new_feature
+```
+
+#### 2. Define Models
+```python
+# new_feature/models.py
+from django.db import models
+from django.contrib.auth.models import User
+
+class NewFeature(models.Model):
+    name = models.CharField(max_length=200)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+```
+
+#### 3. Create Serializers
+```python
+# new_feature/serializers.py
+from rest_framework import serializers
+from .models import NewFeature
+
+class NewFeatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewFeature
+        fields = ['id', 'name', 'user', 'created_at']
+        read_only_fields = ['user', 'created_at']
+```
+
+#### 4. Create API Views
+```python
+# new_feature/api.py
+from rest_framework import viewsets, permissions
+from .models import NewFeature
+from .serializers import NewFeatureSerializer
+
+class NewFeatureViewSet(viewsets.ModelViewSet):
+    queryset = NewFeature.objects.all()
+    serializer_class = NewFeatureSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+```
+
+#### 5. Add URL Routing
+```python
+# new_feature/api_urls.py
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .api import NewFeatureViewSet
+
+router = DefaultRouter()
+router.register(r'new-features', NewFeatureViewSet)
+
+urlpatterns = [
+    path('', include(router.urls)),
+]
+```
+
+#### 6. Include in Main URLs
+```python
+# fithub/urls.py
+urlpatterns = [
+    # ... existing patterns
+    path('api/new-feature/', include('new_feature.api_urls')),
+]
+```
+
+#### 7. Create Tests
+```python
+# new_feature/test_api.py
+from django.test import TestCase
+from rest_framework import status
+from rest_framework.test import APIClient, APITestCase
+from django.contrib.auth.models import User
+from .models import NewFeature
+
+class NewFeatureAPITestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpass123'
+        )
+        self.client.force_authenticate(user=self.user)
+    
+    def test_create_new_feature(self):
+        data = {'name': 'Test Feature'}
+        response = self.client.post('/api/new-feature/new-features/', data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(NewFeature.objects.count(), 1)
+```
+
+#### 8. Create Factories for Testing
+```python
+# new_feature/factories.py
+import factory
+from django.contrib.auth.models import User
+from .models import NewFeature
+
+class NewFeatureFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = NewFeature
+    
+    name = factory.Sequence(lambda n: f"Feature {n}")
+    user = factory.SubFactory('django.contrib.auth.models.User')
+```
+
+### 🧪 Testing Guidelines
+
+#### Test Structure
+```python
+class FeatureAPITestCase(APITestCase):
+    def setUp(self):
+        """Set up test data"""
+        self.client = APIClient()
+        self.user = UserFactory()
+        self.client.force_authenticate(user=self.user)
+    
+    def test_feature_create(self):
+        """Test feature creation"""
+        # Arrange
+        data = {'name': 'Test Feature'}
+        
+        # Act
+        response = self.client.post('/api/features/', data)
+        
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Feature.objects.count(), 1)
+    
+    def test_feature_list(self):
+        """Test feature listing"""
+        # Arrange
+        FeatureFactory.create_batch(3, user=self.user)
+        
+        # Act
+        response = self.client.get('/api/features/')
+        
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 3)
+```
+
+#### Test Categories
+- **Unit Tests**: Test individual components
+- **Integration Tests**: Test API endpoints
+- **Model Tests**: Test model methods and properties
+- **Serializer Tests**: Test data validation and transformation
+
+### 🔧 Code Quality Standards
+
+#### Code Style
+- **Formatting**: Use `black` and `isort`
+- **Linting**: Follow `flake8` guidelines
+- **Line Length**: 127 characters maximum
+- **Imports**: Group and sort imports properly
+
+#### Documentation
+- **Docstrings**: Document all classes and methods
+- **Comments**: Explain complex logic
+- **Type Hints**: Use type hints for function parameters and returns
+
+#### Example Well-Formatted Code
+```python
+from datetime import date, timedelta
+from decimal import Decimal
+from typing import Dict, List, Optional
+
+from django.contrib.auth.models import User
+from django.db import models
+from django.utils import timezone
+from rest_framework import serializers, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
+from .models import Diet, Meal
+
+
+class DietSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Diet model with validation and custom fields.
+    """
+    
+    class Meta:
+        model = Diet
+        fields = [
+            'id', 'name', 'description', 'user', 'start_date',
+            'end_date', 'is_active', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['user', 'created_at', 'updated_at']
+    
+    def validate_start_date(self, value: date) -> date:
+        """
+        Validate that start date is not in the past.
+        
+        Args:
+            value: The start date to validate
+            
+        Returns:
+            The validated start date
+            
+        Raises:
+            ValidationError: If start date is in the past
+        """
+        if value < date.today():
+            raise serializers.ValidationError(
+                "Start date cannot be in the past."
+            )
+        return value
+
+
+class DietViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing diets with full CRUD operations.
+    
+    Provides endpoints for creating, reading, updating, and deleting diets.
+    Includes custom actions for activating diets and getting active diets.
+    """
+    
+    queryset = Diet.objects.all()
+    serializer_class = DietSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['is_active', 'start_date', 'end_date']
+    search_fields = ['name', 'description']
+    ordering_fields = ['created_at', 'start_date', 'name']
+    ordering = ['-created_at']
+    
+    def perform_create(self, serializer: DietSerializer) -> None:
+        """
+        Set the user when creating a new diet.
+        
+        Args:
+            serializer: The diet serializer instance
+        """
+        serializer.save(user=self.request.user)
+    
+    @action(detail=True, methods=['post'])
+    def activate(self, request, pk: Optional[int] = None) -> Response:
+        """
+        Activate a specific diet.
+        
+        Args:
+            request: The HTTP request
+            pk: The primary key of the diet to activate
+            
+        Returns:
+            Response with activation status
+        """
+        diet = self.get_object()
+        diet.is_active = True
+        diet.save()
+        return Response({'status': 'diet activated'})
+```
+
+## 🤖 For AI Assistants
+
+### 🎯 Project Context
+
+FitHub is a Django REST Framework API for fitness and nutrition tracking. The project emphasizes:
+- **Clean Architecture**: Well-structured Django apps with clear separation of concerns
+- **Comprehensive Testing**: Full test coverage with PostgreSQL containers
+- **Code Quality**: Automated formatting, linting, and security scanning
+- **CI/CD**: Automated testing and deployment pipeline
+
+### 🏗️ Architecture Patterns
+
+#### Django App Structure
+Each Django app follows this pattern:
+```
+app_name/
+├── models.py           # Database models
+├── serializers.py      # API serializers  
+├── api.py             # API viewsets
+├── api_urls.py        # API URL routing
+├── factories.py       # Test data factories
+├── test_api.py        # API tests
+├── admin.py           # Django admin
+└── migrations/        # Database migrations
+```
+
+#### API Design Patterns
+- **ViewSets**: Use `ModelViewSet` for full CRUD operations
+- **Serializers**: Handle validation and data transformation
+- **Permissions**: `IsAuthenticated` for all endpoints
+- **Filtering**: DjangoFilterBackend, SearchFilter, OrderingFilter
+- **Custom Actions**: Use `@action` decorator for custom endpoints
+
+#### Testing Patterns
+- **APITestCase**: For API endpoint testing
+- **Factory Pattern**: Use factory-boy for test data generation
+- **Container Tests**: Use testcontainers for PostgreSQL integration tests
+
+### 🔧 Development Guidelines for AI
+
+#### When Adding New Features
+
+1. **Follow Existing Patterns**
+   - Use the same structure as existing apps (nutrition, goals)
+   - Follow the same naming conventions
+   - Use the same testing patterns
+
+2. **Code Quality Requirements**
+   - Format code with `black` and `isort`
+   - Pass `flake8` linting
+   - Write comprehensive tests
+   - Add proper docstrings
+
+3. **API Design Principles**
+   - RESTful endpoints
+   - Proper HTTP status codes
+   - Consistent error handling
+   - User ownership of data
+
+#### Example: Adding a New Feature
+
+When asked to add a new feature, follow this template:
+
+```python
+# 1. Create the model
+class NewFeature(models.Model):
+    name = models.CharField(max_length=200)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+
+# 2. Create the serializer
+class NewFeatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewFeature
+        fields = ['id', 'name', 'user', 'created_at']
+        read_only_fields = ['user', 'created_at']
+
+# 3. Create the API viewset
+class NewFeatureViewSet(viewsets.ModelViewSet):
+    queryset = NewFeature.objects.all()
+    serializer_class = NewFeatureSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    search_fields = ['name']
+    ordering_fields = ['created_at', 'name']
+    ordering = ['-created_at']
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+# 4. Create the factory
+class NewFeatureFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = NewFeature
+    
+    name = factory.Sequence(lambda n: f"Feature {n}")
+    user = factory.SubFactory('django.contrib.auth.models.User')
+
+# 5. Create the tests
+class NewFeatureAPITestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = UserFactory()
+        self.client.force_authenticate(user=self.user)
+    
+    def test_create_new_feature(self):
+        data = {'name': 'Test Feature'}
+        response = self.client.post('/api/new-features/', data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(NewFeature.objects.count(), 1)
+```
+
+#### Common Tasks and Solutions
+
+**Adding a New API Endpoint:**
+1. Add method to existing ViewSet or create new ViewSet
+2. Add URL pattern to `api_urls.py`
+3. Write tests for the endpoint
+4. Update API documentation
+
+**Adding a New Model Field:**
+1. Add field to model
+2. Create and run migration
+3. Update serializer
+4. Update tests
+5. Update factories
+
+**Adding Custom Business Logic:**
+1. Add method to model or create service class
+2. Add custom action to ViewSet
+3. Write tests for the logic
+4. Document the functionality
+
+#### Testing Requirements
+
+Always include these test types:
+- **CRUD Tests**: Create, Read, Update, Delete operations
+- **Authentication Tests**: Ensure proper authentication
+- **Permission Tests**: Ensure user can only access their data
+- **Validation Tests**: Test serializer validation
+- **Custom Action Tests**: Test any custom ViewSet actions
+
+#### Code Quality Checklist
+
+Before submitting code, ensure:
+- [ ] Code is formatted with `black` and `isort`
+- [ ] Passes `flake8` linting
+- [ ] All tests pass (`make test`)
+- [ ] Security checks pass (`make security`)
+- [ ] Proper docstrings and comments
+- [ ] Follows existing patterns and conventions
+
+### 🚨 Common Issues and Solutions
+
+#### Database Issues
+- **Migration Conflicts**: Use `--merge` flag or resolve manually
+- **Test Database**: Use `--reuse-db` flag for faster tests
+- **Container Tests**: Ensure PostgreSQL container is running
+
+#### API Issues
+- **Authentication**: Always include proper authentication headers
+- **Permissions**: Ensure user ownership of data
+- **Validation**: Use serializers for input validation
+- **Error Handling**: Return proper HTTP status codes
+
+#### Testing Issues
+- **Factory Dependencies**: Use `SubFactory` for foreign keys
+- **Test Isolation**: Use `setUp` method for test data
+- **Container Tests**: Use `conftest.py` for container setup
+
+### 📚 Key Files to Understand
+
+1. **`fithub/settings.py`**: Main Django settings
+2. **`nutrition/api.py`**: Example API implementation
+3. **`nutrition/test_api.py`**: Example test implementation
+4. **`conftest.py`**: Test configuration and fixtures
+5. **`.github/workflows/ci.yml`**: CI/CD pipeline
+6. **`Makefile`**: Development commands
+
+### 🎯 Best Practices
+
+1. **Consistency**: Follow existing patterns and conventions
+2. **Testing**: Write comprehensive tests for all functionality
+3. **Documentation**: Add docstrings and comments
+4. **Security**: Ensure proper authentication and authorization
+5. **Performance**: Use efficient database queries
+6. **Error Handling**: Provide meaningful error messages
+7. **Code Quality**: Maintain high code quality standards
+
+This guide should help both human developers and AI assistants work effectively with the FitHub codebase while maintaining consistency and quality standards.

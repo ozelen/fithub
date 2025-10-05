@@ -6,11 +6,13 @@ from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from drf_spectacular.utils import extend_schema
 
 from .models import BodyMeasurement, Goal
 from .serializers import BodyMeasurementSerializer, GoalSerializer
 
 
+@extend_schema(tags=['Goals'])
 class GoalViewSet(viewsets.ModelViewSet):
     queryset = Goal.objects.all()
     serializer_class = GoalSerializer
@@ -119,6 +121,7 @@ class GoalViewSet(viewsets.ModelViewSet):
         return Response(progress_data)
 
 
+@extend_schema(tags=['Goals'])
 class BodyMeasurementViewSet(viewsets.ModelViewSet):
     queryset = BodyMeasurement.objects.all()
     serializer_class = BodyMeasurementSerializer

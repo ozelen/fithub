@@ -22,6 +22,9 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("home.urls")),
+    # Authentication
+    path("api/auth/", include("authentication.urls")),
+    # API Endpoints
     path("api/nutrition/", include("nutrition.api_urls")),
     path("api/goals/", include("goals.api_urls")),
     # API Documentation

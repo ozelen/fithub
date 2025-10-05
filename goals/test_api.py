@@ -304,7 +304,8 @@ class GoalsAPITestCase(APITestCase):
         url = reverse("goal-list")
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # JWT authentication returns 401, Token authentication returns 403
+        self.assertIn(response.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
 
     def test_cross_user_access_denied(self):
         """Test that users cannot access other users' data"""
