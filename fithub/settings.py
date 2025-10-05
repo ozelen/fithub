@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "corsheaders",
+    "drf_spectacular",
     "home",
     "fitbot",
     "nutrition",
@@ -168,5 +169,20 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# drf-spectacular Configuration
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'FitHub API',
+    'DESCRIPTION': 'A comprehensive fitness and nutrition tracking API',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX': '/api/',
+    'TAGS': [
+        {'name': 'Nutrition', 'description': 'Diet, meal, and ingredient management'},
+        {'name': 'Goals', 'description': 'Goal tracking and body measurements'},
     ],
 }
