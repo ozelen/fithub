@@ -25,6 +25,7 @@ FitHub is built as a modern, scalable REST API using Django REST Framework with 
 
 ## 📊 High-Level Architecture
 
+### System Overview
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    FitHub System Architecture               │
@@ -47,6 +48,19 @@ FitHub is built as a modern, scalable REST API using Django REST Framework with 
                        │ • Monitoring    │
                        └─────────────────┘
 ```
+
+### C4 Deployment Architecture
+
+For detailed deployment architecture including production, staging, and development environments, see the comprehensive C4 deployment diagram:
+
+**📋 [C4 Deployment Diagram](C4_DEPLOYMENT.md)**
+
+The C4 deployment diagram provides:
+- **Production Environment**: Load balancer, application cluster, database cluster, monitoring
+- **Local Development**: Docker containers for web app and PostgreSQL
+- **CI/CD Pipeline**: GitHub Actions, Docker Hub registry
+- **Technology Stack**: Detailed technology choices and configurations
+- **Security Architecture**: Network, application, and data security layers
 
 ## 🏛️ Application Architecture
 
