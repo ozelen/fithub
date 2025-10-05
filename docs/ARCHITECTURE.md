@@ -62,6 +62,15 @@ The C4 deployment diagram provides:
 - **Technology Stack**: Detailed technology choices and configurations
 - **Security Architecture**: Network, application, and data security layers
 
+**🔄 [CI Pipeline Architecture](CI_PIPELINE.md)**
+
+The CI pipeline documentation provides:
+- **4-Stage Pipeline**: Detailed flow from code commit to deployment
+- **Quality Gates**: Code quality, security, testing, and build requirements
+- **Job Dependencies**: Parallel and sequential job execution patterns
+- **Technology Stack**: CI/CD tools and configurations
+- **Monitoring**: Pipeline metrics and observability
+
 ## 🏛️ Application Architecture
 
 ### Django Project Structure

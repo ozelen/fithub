@@ -103,6 +103,20 @@ C4Deployment
     UpdateRelStyle(fithubWeb, postgresLocal, $offsetY="-10")
 ```
 
+## 🔄 CI/CD Pipeline
+
+For detailed CI/CD pipeline architecture, see the dedicated CI pipeline documentation:
+
+**📋 [CI Pipeline Architecture](CI_PIPELINE.md)**
+
+The CI pipeline includes:
+- **4-Stage Pipeline**: Code quality → Testing → Build → Deploy
+- **Parallel Jobs**: Lint and security checks run simultaneously
+- **Sequential Dependencies**: Each stage depends on previous stage success
+- **Quality Gates**: Comprehensive code quality, security, and testing requirements
+- **Multi-platform Builds**: Docker images for linux/amd64 and linux/arm64
+- **Conditional Deployment**: Production deployment only on main branch
+
 ## 🔧 Technology Stack Details
 
 ### Application Layer

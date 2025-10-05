@@ -10,6 +10,7 @@ A comprehensive fitness and nutrition tracking API built with Django REST Framew
 - **[🚀 Deployment](docs/DEPLOYMENT.md)** - Production deployment and CI/CD
 - **[📊 ER Diagram](docs/ER_DIAGRAM.md)** - Database schema visualization
 - **[🏗️ C4 Deployment](docs/C4_DEPLOYMENT.md)** - C4-style deployment architecture diagrams
+- **[🔄 CI Pipeline](docs/CI_PIPELINE.md)** - Detailed CI/CD pipeline architecture and flow
 
 ## 🚀 Quick Start
 
