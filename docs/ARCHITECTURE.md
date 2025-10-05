@@ -4,6 +4,25 @@
 
 FitHub is built as a modern, scalable REST API using Django REST Framework with a focus on maintainability, testability, and deployment automation.
 
+## 🔑 Key Architectural Decisions
+
+### Technology Choices
+
+1. **Django REST Framework**: Chosen for its mature ecosystem, built-in authentication, and excellent API tooling
+2. **PostgreSQL**: Selected for ACID compliance, JSON support, and excellent Django integration
+3. **JWT Authentication**: Primary authentication method for stateless API access
+4. **uv Package Manager**: Fast Python package manager for improved development experience
+5. **Docker**: Containerization for consistent deployment across environments
+6. **pytest + testcontainers**: Modern testing approach with real database containers
+
+### Design Patterns
+
+1. **API-First Design**: Pure REST API without template dependencies
+2. **ViewSet Pattern**: Consistent CRUD operations across all resources
+3. **Factory Pattern**: Test data generation using factory-boy
+4. **Container Pattern**: Database testing with testcontainers
+5. **Pre-commit Hooks**: Automated code quality enforcement
+
 ## 📊 High-Level Architecture
 
 ```
@@ -65,6 +84,76 @@ app_name/
 ├── migrations/        # Database migrations
 └── tests.py           # Basic tests
 ```
+
+## 📦 Dependencies & Package Management
+
+### Core Dependencies
+
+#### Production Dependencies
+```toml
+dependencies = [
+    "django>=5.2.7",                    # Web framework
+    "djangorestframework>=3.16.1",      # API framework
+    "djangorestframework-simplejwt>=5.5.1", # JWT authentication
+    "django-filter>=24.2",              # API filtering
+    "django-cors-headers>=4.3.1",       # CORS handling
+    "drf-spectacular>=0.27.0",          # OpenAPI documentation
+    "pillow>=11.3.0",                   # Image processing
+    "psycopg2-binary>=2.9.10",          # PostgreSQL adapter
+    "python-dotenv>=1.1.1",             # Environment variables
+]
+```
+
+#### Development Dependencies
+```toml
+test = [
+    "pytest>=8.0.0",                    # Testing framework
+    "pytest-django>=4.8.0",             # Django testing integration
+    "pytest-cov>=4.0.0",                # Coverage reporting
+    "factory-boy>=3.3.0",               # Test data factories
+    "faker>=22.0.0",                    # Fake data generation
+    "testcontainers>=3.7.0",            # Database containers
+    "docker>=6.1.0",                    # Docker integration
+    "black>=23.0.0",                    # Code formatting
+    "isort>=5.12.0",                    # Import sorting
+    "flake8>=6.0.0",                    # Linting
+    "bandit>=1.7.0",                    # Security analysis
+    "safety>=2.3.0",                    # Dependency vulnerability scanning
+]
+
+dev = [
+    "pre-commit>=4.3.0",                # Git hooks
+]
+```
+
+### Package Management Strategy
+
+#### uv Package Manager
+- **Why uv**: Significantly faster than pip, better dependency resolution
+- **Lock File**: `uv.lock` ensures reproducible builds
+- **Virtual Environment**: Automatic `.venv` management
+- **Commands**: `uv sync`, `uv add`, `uv run`
+
+#### Dependency Groups
+- **Production**: Core runtime dependencies
+- **Test**: Testing and quality assurance tools
+- **Dev**: Development workflow tools
+
+### Authentication Architecture
+
+#### Multi-Method Authentication
+1. **JWT (Primary)**: Stateless, scalable for API clients
+   - Access tokens: 60 minutes
+   - Refresh tokens: 7 days
+   - Token rotation enabled
+
+2. **Session Authentication**: For web browser clients
+   - CSRF protection enabled
+   - Session-based state management
+
+3. **Token Authentication**: DRF tokens for simple API access
+   - Returns user information with token
+   - Suitable for server-to-server communication
 
 ## 🗄️ Data Architecture
 

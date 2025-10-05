@@ -44,10 +44,11 @@ A comprehensive fitness and nutrition tracking API built with Django REST Framew
 
 - **Backend**: Django 5.2.7, Django REST Framework 3.16.1
 - **Database**: PostgreSQL 16
-- **Authentication**: Session + Token authentication
+- **Authentication**: JWT (primary) + Session + Token authentication
 - **Documentation**: drf-spectacular (OpenAPI/Swagger)
 - **Testing**: pytest, pytest-django, factory-boy, testcontainers
-- **Code Quality**: black, isort, flake8, bandit, safety
+- **Code Quality**: black, isort, flake8, bandit, safety, pre-commit hooks
+- **Package Management**: uv (fast Python package manager)
 - **Deployment**: Docker, GitHub Actions CI/CD
 
 ## 📦 Installation
@@ -57,7 +58,7 @@ A comprehensive fitness and nutrition tracking API built with Django REST Framew
 - Python 3.13+
 - PostgreSQL 16+
 - Docker (optional, for containerized deployment)
-- uv (recommended package manager)
+- uv (fast Python package manager - recommended)
 
 ### Local Development Setup
 

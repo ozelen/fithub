@@ -7,7 +7,23 @@
 
 ## 🔐 Authentication
 
-FitHub API supports multiple authentication methods:
+FitHub API supports multiple authentication methods with JWT as the primary method for API clients:
+
+### Authentication Strategy
+
+The API implements a **multi-method authentication strategy** to support different client types:
+
+1. **JWT Authentication** (Primary): Stateless, scalable for API clients
+2. **Session Authentication**: For web browser clients with CSRF protection
+3. **Token Authentication**: Simple DRF tokens for server-to-server communication
+
+### JWT Configuration
+
+- **Access Token Lifetime**: 60 minutes
+- **Refresh Token Lifetime**: 7 days
+- **Token Rotation**: Enabled for security
+- **Blacklist**: Refresh tokens are blacklisted after rotation
+- **Algorithm**: HS256 with project secret key
 
 ### 1. JWT Authentication (Recommended for API clients)
 

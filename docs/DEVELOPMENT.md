@@ -1,5 +1,43 @@
 # FitHub Development Guide
 
+## 🔑 Key Development Decisions
+
+### Technology Choices
+
+1. **uv Package Manager**: Chosen over pip for significantly faster dependency resolution and installation
+2. **JWT Authentication**: Primary authentication method for stateless API access
+3. **PostgreSQL**: Production database with testcontainers for testing
+4. **pytest + factory-boy**: Modern testing approach with realistic test data
+5. **Pre-commit Hooks**: Automated code quality enforcement
+6. **Docker**: Containerized deployment for consistency
+
+### Code Quality Standards
+
+- **Line Length**: 127 characters (black/isort configuration)
+- **Python Version**: 3.13+ (latest stable)
+- **Test Coverage**: Minimum 70% coverage required
+- **Security**: Bandit and safety checks in CI/CD
+- **Formatting**: Black + isort for consistent code style
+
+### Testing Strategy
+
+#### Test Database Strategy
+- **Local Development**: SQLite for fast testing (`make test-fast`)
+- **CI/CD**: PostgreSQL with testcontainers for realistic testing
+- **Test Data**: factory-boy with faker for realistic test data generation
+
+#### Test Types
+- **Unit Tests**: Individual component testing
+- **Integration Tests**: API endpoint testing with real database
+- **Authentication Tests**: JWT, session, and token authentication
+- **Security Tests**: Bandit security analysis
+
+#### Test Configuration
+- **pytest**: Modern testing framework with fixtures
+- **testcontainers**: PostgreSQL containers for integration tests
+- **factory-boy**: Test data factories for consistent test data
+- **Coverage**: HTML and XML coverage reports
+
 ## 👥 For Human Developers
 
 ### 🚀 Quick Start
@@ -49,6 +87,33 @@ make test-fast        # Quick SQLite tests
 make test             # Full PostgreSQL tests
 make test-ci          # CI-style tests with coverage
 ```
+
+#### Pre-commit Hooks
+
+The project uses pre-commit hooks to ensure code quality:
+
+```bash
+# Install pre-commit hooks (one-time setup)
+uv run pre-commit install
+
+# Run hooks manually
+uv run pre-commit run --all-files
+
+# Skip hooks (not recommended)
+git commit --no-verify -m "message"
+```
+
+**Pre-commit checks:**
+- ✅ **pytest**: All tests must pass
+- ✅ **lint**: Code must pass flake8 checks
+- ✅ **format-check**: Code must be properly formatted
+- ✅ **security**: Security analysis with bandit
+
+**Benefits:**
+- Prevents broken code from being committed
+- Enforces consistent code style
+- Catches security issues early
+- Maintains high code quality standards
 
 #### Git Workflow
 
