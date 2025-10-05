@@ -10,72 +10,63 @@ This document provides a C4-style deployment diagram for the FitHub fitness and 
 C4Deployment
     title Deployment Diagram for FitHub API
 
-    Deployment_Node(dev, "Developer Machine", "Local Development"){
-        Container(devClient, "Development Client", "Browser/Postman", "Developer testing FitHub API endpoints")
+    Deployment_Node(clientEnv, "Web App Environment", "CloudFlare"){
+        Deployment_Node(webapp, "Web Application", "CF Pages/Workers"){
+            Container(frontendApp, "Frontend App", "NextJS/Astro/React", "User Landing Pages")
+        }
     }
 
-    Deployment_Node(ci, "GitHub Actions", "CI/CD Pipeline"){
-        Container(githubActions, "CI/CD Pipeline", "GitHub Actions", "Automated testing, linting, security checks, and Docker image building")
-    }
-
-    Deployment_Node(dockerhub, "Docker Hub", "Container Registry"){
+    Deployment_Node(ci, "CI/CD", "GitHub Actions"){
+        Container(githubActions, "CI Job", "GitHub Action", "Automated testing, linting, security checks, and Docker image building")
         Container(registry, "Docker Registry", "Docker Hub", "Stores FitHub Docker images for deployment")
     }
 
-    Deployment_Node(production, "Production Environment", "Cloud/On-Premise"){
-        Deployment_Node(loadBalancer, "Load Balancer", "Nginx/ALB"){
-            Container(nginx, "Reverse Proxy", "Nginx", "Routes traffic to FitHub application instances")
+    Deployment_Node(vpc, "Virtual Private Cloud", "AWS VPC"){
+        Deployment_Node(pubSubnet, "Public Subnet", "10.0.101.0/24, 10.0.102.0/24"){
+            Container(alb, "Application Load Balancer", "AWS ALB", "Routes traffic to FitHub application instances")
         }
 
-        Deployment_Node(appCluster, "FitHub Application Cluster", "Docker Swarm/K8s"){
-            Deployment_Node(app1, "FitHub App Instance 1", "Docker Container"){
-                Container(fithubApp1, "FitHub API", "Django + Python 3.13", "Handles nutrition and goals API requests")
+        Deployment_Node(prvSubnet, "Private Subnet", "10.0.1.0/24, 10.0.2.0/24"){
+            Deployment_Node(cluster, "Orchestration Cluster", "AWS ECS"){
+                Deployment_Node(fithubService, "FitHub Service", "ECS Service"){
+                    Container(djangoApp, "Django App", "ECS Task", "Handles nutrition and goals API requests")
+                    Container(djangoAppLogAgent, "Logging Agent", "Sidecar", "Handles nutrition and goals API requests")
+                }
             }
-            Deployment_Node(app2, "FitHub App Instance 2", "Docker Container"){
-                Container(fithubApp2, "FitHub API", "Django + Python 3.13", "Handles nutrition and goals API requests")
+            Deployment_Node(database, "Database Cluster", "AWS RDS"){
+                Deployment_Node(postgres, "Primary Database", "PostgreSQL 16"){
+                    ContainerDb(postgresDb, "FitHub Database", "PostgreSQL", "Stores user data, nutrition records, goals, and body measurements")
+                }
+            }
+            Deployment_Node(elcache, "Caching Cluster", "ElastiCache") {
+                ContainerDb(redis, "Redis KV", "Redis/ElastiCache", "Used as Agent short memory and Celery broker")
             }
         }
 
-        Deployment_Node(database, "Database Cluster", "PostgreSQL"){
-            Deployment_Node(postgres, "Primary Database", "PostgreSQL 16"){
-                ContainerDb(postgresDb, "FitHub Database", "PostgreSQL", "Stores user data, nutrition records, goals, and body measurements")
-            }
-            Deployment_Node(postgresReplica, "Read Replica", "PostgreSQL 16"){
-                ContainerDb(postgresReplicaDb, "FitHub Read Replica", "PostgreSQL", "Read-only replica for improved performance")
-            }
-        }
-
-        Deployment_Node(monitoring, "Monitoring Stack", "Prometheus/Grafana"){
-            Container(prometheus, "Metrics Collection", "Prometheus", "Collects application and infrastructure metrics")
-            Container(grafana, "Monitoring Dashboard", "Grafana", "Visualizes metrics and alerts")
+        Deployment_Node(monitoring, "Monitoring Stack", "DataDog"){
+            Container(ddcollect, "Metrics Collection", "DD Collector", "Collects application and infrastructure metrics")
+            Container(dddasboard, "Monitoring Dashboard", "DataDog", "Visualizes metrics and alerts")
         }
     }
 
-    Rel(devClient, nginx, "API Requests", "HTTPS")
+    Rel(frontendApp, alb, "API Requests", "HTTPS")
     Rel(githubActions, registry, "Push Images", "Docker API")
-    Rel(nginx, fithubApp1, "Routes Requests", "HTTP")
-    Rel(nginx, fithubApp2, "Routes Requests", "HTTP")
-    Rel(fithubApp1, postgresDb, "Read/Write", "PostgreSQL Protocol")
-    Rel(fithubApp2, postgresDb, "Read/Write", "PostgreSQL Protocol")
-    Rel(fithubApp1, postgresReplicaDb, "Read Only", "PostgreSQL Protocol")
-    Rel(fithubApp2, postgresReplicaDb, "Read Only", "PostgreSQL Protocol")
-    Rel(postgresDb, postgresReplicaDb, "Replication", "PostgreSQL Streaming")
-    Rel(fithubApp1, prometheus, "Metrics", "HTTP")
-    Rel(fithubApp2, prometheus, "Metrics", "HTTP")
-    Rel(prometheus, grafana, "Data Source", "HTTP")
+    Rel(registry, djangoApp, "API Requests", "HTTPS")
+    Rel(alb, djangoApp, "Routes Requests", "HTTP")
+    Rel(djangoApp, postgresDb, "Read/Write", "PostgreSQL Protocol")
+    Rel(djangoApp, redis, "Read/Write", "Redis Protocol")
+    Rel(djangoAppLogAgent, djangoApp, "Collects", "HTTP")
+    Rel(djangoAppLogAgent, ddcollect, "Metrics", "HTTP")
+    Rel(ddcollect, dddasboard, "Data Source", "HTTP")
     
-    UpdateRelStyle(devClient, nginx, $offsetY="-40")
+    UpdateRelStyle(frontendApp, alb, $offsetY="-40")
     UpdateRelStyle(githubActions, registry, $offsetY="-30")
-    UpdateRelStyle(nginx, fithubApp1, $offsetY="-20", $offsetX="10")
-    UpdateRelStyle(nginx, fithubApp2, $offsetY="-20", $offsetX="-10")
-    UpdateRelStyle(fithubApp1, postgresDb, $offsetY="-10", $offsetX="5")
-    UpdateRelStyle(fithubApp2, postgresDb, $offsetY="-10", $offsetX="-5")
-    UpdateRelStyle(fithubApp1, postgresReplicaDb, $offsetY="-10", $offsetX="15")
-    UpdateRelStyle(fithubApp2, postgresReplicaDb, $offsetY="-10", $offsetX="-15")
+    UpdateRelStyle(alb, djangoApp, $offsetY="-20", $offsetX="10")
+    UpdateRelStyle(alb, fithubApp2, $offsetY="-20", $offsetX="-10")
+    UpdateRelStyle(djangoApp, postgresDb, $offsetY="-10", $offsetX="5")
     UpdateRelStyle(postgresDb, postgresReplicaDb, $offsetY="-5")
-    UpdateRelStyle(fithubApp1, prometheus, $offsetY="-30", $offsetX="20")
-    UpdateRelStyle(fithubApp2, prometheus, $offsetY="-30", $offsetX="-20")
-    UpdateRelStyle(prometheus, grafana, $offsetY="-10")
+    UpdateRelStyle(djangoApp, ddcollect, $offsetY="-30", $offsetX="20")
+    UpdateRelStyle(ddcollect, dddasboard, $offsetY="-10")
 ```
 
 ## 🏗️ Local Development Deployment
