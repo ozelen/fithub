@@ -235,10 +235,6 @@ class NutritionAPITestCase(APITestCase):
         
         response = self.client.post(url, data)
         
-        if response.status_code != status.HTTP_201_CREATED:
-            print(f"Response status: {response.status_code}")
-            print(f"Response data: {response.data}")
-        
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(MealIngredient.objects.count(), 1)
         meal_ingredient = MealIngredient.objects.first()
