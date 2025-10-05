@@ -270,9 +270,9 @@ class NutritionAPITestCase(APITestCase):
 
     def test_search(self):
         """Test search functionality"""
-        diet1 = DietFactory(user=self.user, name="Weight Loss Diet")
-        diet2 = DietFactory(user=self.user, name="Muscle Gain Diet")
-        diet3 = DietFactory(user=self.user, name="Healthy Eating")
+        diet1 = DietFactory(user=self.user, name="Weight Loss Diet", notes="")
+        diet2 = DietFactory(user=self.user, name="Muscle Gain Diet", notes="")
+        diet3 = DietFactory(user=self.user, name="Healthy Eating", notes="")
 
         url = reverse("diet-list")
         response = self.client.get(url, {"search": "weight"})

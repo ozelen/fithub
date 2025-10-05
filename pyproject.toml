@@ -48,3 +48,8 @@ exclude = '''
 profile = "black"
 line_length = 127
 skip_glob = [".venv/*", "venv/*", "__pycache__/*", ".git/*"]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.3.0",
+]

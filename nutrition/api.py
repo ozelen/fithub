@@ -1,10 +1,10 @@
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema
 
 from .models import Category, Diet, Ingredient, Meal, MealIngredient, MealPreference, MealRecord
 from .serializers import (
@@ -19,7 +19,7 @@ from .serializers import (
 )
 
 
-@extend_schema(tags=['Nutrition'])
+@extend_schema(tags=["Nutrition"])
 class DietViewSet(viewsets.ModelViewSet):
     queryset = Diet.objects.all()
     serializer_class = DietSerializer
@@ -60,7 +60,7 @@ class DietViewSet(viewsets.ModelViewSet):
             return Response({"error": "No active diet found"}, status=status.HTTP_404_NOT_FOUND)
 
 
-@extend_schema(tags=['Nutrition'])
+@extend_schema(tags=["Nutrition"])
 class MealViewSet(viewsets.ModelViewSet):
     queryset = Meal.objects.all()
     serializer_class = MealSerializer
@@ -119,7 +119,7 @@ class MealViewSet(viewsets.ModelViewSet):
         )
 
 
-@extend_schema(tags=['Nutrition'])
+@extend_schema(tags=["Nutrition"])
 class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
@@ -163,7 +163,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-@extend_schema(tags=['Nutrition'])
+@extend_schema(tags=["Nutrition"])
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -182,7 +182,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
         return Category.objects.all()
 
 
-@extend_schema(tags=['Nutrition'])
+@extend_schema(tags=["Nutrition"])
 class MealRecordViewSet(viewsets.ModelViewSet):
     queryset = MealRecord.objects.all()
     serializer_class = MealRecordSerializer
@@ -245,7 +245,7 @@ class MealRecordViewSet(viewsets.ModelViewSet):
         )
 
 
-@extend_schema(tags=['Nutrition'])
+@extend_schema(tags=["Nutrition"])
 class MealPreferenceViewSet(viewsets.ModelViewSet):
     queryset = MealPreference.objects.all()
     serializer_class = MealPreferenceSerializer
@@ -279,7 +279,7 @@ class MealPreferenceViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-@extend_schema(tags=['Nutrition'])
+@extend_schema(tags=["Nutrition"])
 class MealIngredientViewSet(viewsets.ModelViewSet):
     queryset = MealIngredient.objects.all()
     serializer_class = MealIngredientSerializer
