@@ -37,8 +37,8 @@ def django_db_setup(postgres_container, django_db_blocker):
         'HOST': host,
         'PORT': port,
         'NAME': 'test_fithub',
-        'USER': 'test',
-        'PASSWORD': 'test',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
     })
     
     # Let Django handle the test database creation
