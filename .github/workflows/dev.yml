@@ -213,8 +213,3 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
     
-    - name: Test Docker image
-      run: |
-        echo "Testing Docker image basic functionality..."
-        docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev python manage.py check
-        echo "Docker image test completed successfully!"

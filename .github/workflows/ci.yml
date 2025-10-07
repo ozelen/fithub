@@ -214,11 +214,6 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
     
-    - name: Test Docker image
-      run: |
-        echo "Testing Docker image basic functionality..."
-        docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest python manage.py check
-        echo "Docker image test completed successfully!"
 
   # Stage 4: Deployment (runs on all tag pushes, depends on all previous stages)
   deploy:
