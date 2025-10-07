@@ -84,7 +84,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_DB: test_fithub
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U postgres -d test_fithub"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -108,12 +108,19 @@ jobs:
       run: |
         uv sync --extra test
     
+    - name: Install PostgreSQL client
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y postgresql-client
+    
     - name: Wait for PostgreSQL
       run: |
-        until pg_isready -h localhost -p 5432 -U postgres; do
-          echo "Waiting for PostgreSQL..."
+        echo "Waiting for PostgreSQL to be ready..."
+        timeout 60 bash -c 'until pg_isready -h localhost -p 5432 -U postgres -d test_fithub; do
+          echo "PostgreSQL is not ready yet. Waiting..."
           sleep 2
-        done
+        done'
+        echo "PostgreSQL is ready!"
     
     - name: Run migrations
       run: |
