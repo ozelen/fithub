@@ -2,8 +2,16 @@
 Pytest configuration with PostgreSQL test containers.
 """
 
-import pytest
+import os
+
+import django
 from django.conf import settings
+
+# Configure Django settings before any imports
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fithub.test_settings")
+django.setup()
+
+import pytest
 from testcontainers.postgres import PostgresContainer
 
 
