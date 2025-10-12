@@ -55,15 +55,15 @@ CSRF_TRUSTED_ORIGINS = os.environ.get(
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True  # For development only
 CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
 ]
 
 
@@ -215,9 +215,18 @@ SPECTACULAR_SETTINGS = {
     "SCHEMA_PATH_PREFIX": "/api/",
     "TAGS": [
         {"name": "Authentication", "description": "Authentication endpoints"},
-        {"name": "Accounts", "description": "User registration and profile management"},
-        {"name": "Nutrition", "description": "Diet, meal, and ingredient management"},
-        {"name": "Goals", "description": "Goal tracking and body measurements"},
+        {
+            "name": "Accounts",
+            "description": "User registration and profile management",
+        },
+        {
+            "name": "Nutrition",
+            "description": "Diet, meal, and ingredient management",
+        },
+        {
+            "name": "Goals",
+            "description": "Goal tracking and body measurements",
+        },
     ],
 }
 

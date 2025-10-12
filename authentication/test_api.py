@@ -3,7 +3,6 @@ Tests for authentication API endpoints.
 """
 
 from django.contrib.auth.models import User
-from django.test import TestCase
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
@@ -15,7 +14,11 @@ class AuthenticationAPITestCase(APITestCase):
     def setUp(self):
         """Set up test data."""
         self.client = APIClient()
-        self.user = User.objects.create_user(username="testuser", email="test@example.com", password="testpass123")
+        self.user = User.objects.create_user(
+            username="testuser",
+            email="test@example.com",
+            password="testpass123",
+        )
 
     def test_token_authentication_success(self):
         """Test successful token authentication."""
@@ -59,7 +62,14 @@ class AuthenticationAPITestCase(APITestCase):
         response = self.client.post("/api/auth/token/", data)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        expected_fields = ["token", "user_id", "username", "email", "is_staff", "is_superuser"]
+        expected_fields = [
+            "token",
+            "user_id",
+            "username",
+            "email",
+            "is_staff",
+            "is_superuser",
+        ]
         for field in expected_fields:
             self.assertIn(field, response.data)
 
@@ -108,7 +118,10 @@ class AuthenticationAPITestCase(APITestCase):
         """Test that unauthenticated requests fail."""
         response = self.client.get("/api/nutrition/diets/")
         # JWT authentication returns 401, Token authentication returns 403
-        self.assertIn(response.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
+        self.assertIn(
+            response.status_code,
+            [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN],
+        )
 
 
 class JWTAuthenticationAPITestCase(APITestCase):
@@ -117,7 +130,11 @@ class JWTAuthenticationAPITestCase(APITestCase):
     def setUp(self):
         """Set up test data."""
         self.client = APIClient()
-        self.user = User.objects.create_user(username="testuser", email="test@example.com", password="testpass123")
+        self.user = User.objects.create_user(
+            username="testuser",
+            email="test@example.com",
+            password="testpass123",
+        )
 
     def test_jwt_token_obtain_success(self):
         """Test successful JWT token obtain."""
@@ -144,7 +161,9 @@ class JWTAuthenticationAPITestCase(APITestCase):
 
         # Refresh the token
         refresh_data = {"refresh": refresh_token}
-        response = self.client.post("/api/auth/jwt/token/refresh/", refresh_data)
+        response = self.client.post(
+            "/api/auth/jwt/token/refresh/", refresh_data
+        )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("access", response.data)
@@ -185,6 +204,8 @@ class JWTAuthenticationAPITestCase(APITestCase):
     def test_jwt_token_refresh_invalid_token(self):
         """Test JWT token refresh with invalid refresh token."""
         refresh_data = {"refresh": "invalid_refresh_token"}
-        response = self.client.post("/api/auth/jwt/token/refresh/", refresh_data)
+        response = self.client.post(
+            "/api/auth/jwt/token/refresh/", refresh_data
+        )
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

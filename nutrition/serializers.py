@@ -3,7 +3,15 @@ from rest_framework import serializers
 
 from goals.models import Goal
 
-from .models import Category, Diet, Ingredient, Meal, MealIngredient, MealPreference, MealRecord
+from .models import (
+    Category,
+    Diet,
+    Ingredient,
+    Meal,
+    MealIngredient,
+    MealPreference,
+    MealRecord,
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -26,7 +34,9 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class IngredientSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
-    category_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    category_id = serializers.IntegerField(
+        write_only=True, required=False, allow_null=True
+    )
 
     class Meta:
         model = Ingredient
@@ -49,7 +59,9 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class DietSerializer(serializers.ModelSerializer):
     goal = GoalSerializer(read_only=True)
-    goal_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    goal_id = serializers.IntegerField(
+        write_only=True, required=False, allow_null=True
+    )
     user = UserSerializer(read_only=True)
     start_date = serializers.DateField(required=False)
     end_date = serializers.DateField(required=False, allow_null=True)
@@ -102,7 +114,9 @@ class MealIngredientSerializer(serializers.ModelSerializer):
 
 class MealSerializer(serializers.ModelSerializer):
     diet = DietSerializer(read_only=True)
-    diet_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    diet_id = serializers.IntegerField(
+        write_only=True, required=False, allow_null=True
+    )
     ingredients = MealIngredientSerializer(many=True, read_only=True)
     start_date = serializers.DateField(required=False, allow_null=True)
     end_date = serializers.DateField(required=False, allow_null=True)
@@ -137,7 +151,14 @@ class MealEditSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Meal
-        fields = ["id", "name", "description", "diet_id", "created_at", "updated_at"]
+        fields = [
+            "id",
+            "name",
+            "description",
+            "diet_id",
+            "created_at",
+            "updated_at",
+        ]
 
 
 class MealRecordSerializer(serializers.ModelSerializer):
@@ -204,4 +225,12 @@ class MealPreferenceUpdateSerializer(serializers.ModelSerializer):
 class IngredientSearchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = ["id", "name", "category", "calories", "proteins", "fats", "carbs"]
+        fields = [
+            "id",
+            "name",
+            "category",
+            "calories",
+            "proteins",
+            "fats",
+            "carbs",
+        ]

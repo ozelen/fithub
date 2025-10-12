@@ -1,6 +1,14 @@
 from django.contrib import admin
 
-from .models import Category, Diet, Ingredient, Meal, MealIngredient, MealPreference, MealRecord
+from .models import (
+    Category,
+    Diet,
+    Ingredient,
+    Meal,
+    MealIngredient,
+    MealPreference,
+    MealRecord,
+)
 
 
 @admin.register(Category)
@@ -13,7 +21,14 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ["name", "category", "calories", "proteins", "fats", "carbs"]
+    list_display = [
+        "name",
+        "category",
+        "calories",
+        "proteins",
+        "fats",
+        "carbs",
+    ]
     list_filter = ["category", "created_at"]
     search_fields = ["name", "description"]
     ordering = ["name"]
@@ -67,12 +82,25 @@ class MealRecordAdmin(admin.ModelAdmin):
 
 @admin.register(MealPreference)
 class MealPreferenceAdmin(admin.ModelAdmin):
-    list_display = ["user", "ingredient", "preference_type", "barcode", "created_at"]
+    list_display = [
+        "user",
+        "ingredient",
+        "preference_type",
+        "barcode",
+        "created_at",
+    ]
     list_filter = ["preference_type", "created_at", "user"]
-    search_fields = ["user__username", "ingredient__name", "barcode", "description"]
+    search_fields = [
+        "user__username",
+        "ingredient__name",
+        "barcode",
+        "description",
+    ]
     ordering = ["user__username", "ingredient__name"]
     readonly_fields = ["created_at", "updated_at"]
     autocomplete_fields = ["user", "ingredient"]
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("user", "ingredient")
+        return (
+            super().get_queryset(request).select_related("user", "ingredient")
+        )

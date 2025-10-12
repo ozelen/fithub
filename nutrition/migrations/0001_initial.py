@@ -59,7 +59,10 @@ class Migration(migrations.Migration):
                 ("day_carbohydrates_g", models.FloatField()),
                 ("day_calories_kcal", models.FloatField()),
                 ("is_active", models.BooleanField(default=False)),
-                ("start_date", models.DateField(default=django.utils.timezone.now)),
+                (
+                    "start_date",
+                    models.DateField(default=django.utils.timezone.now),
+                ),
                 ("end_date", models.DateField(blank=True, null=True)),
                 ("notes", models.TextField(blank=True)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
@@ -95,7 +98,10 @@ class Migration(migrations.Migration):
                 ("description", models.TextField(blank=True, null=True)),
                 (
                     "is_personal",
-                    models.BooleanField(default=False, help_text="Personal ingredient created by user"),
+                    models.BooleanField(
+                        default=False,
+                        help_text="Personal ingredient created by user",
+                    ),
                 ),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
@@ -137,7 +143,11 @@ class Migration(migrations.Migration):
                 ("start_date", models.DateField(blank=True, null=True)),
                 (
                     "end_date",
-                    models.DateField(blank=True, help_text="End date for recurrent meals", null=True),
+                    models.DateField(
+                        blank=True,
+                        help_text="End date for recurrent meals",
+                        null=True,
+                    ),
                 ),
                 ("start_time", models.TimeField(blank=True, null=True)),
                 ("duration_minutes", models.IntegerField(default=30)),
@@ -184,7 +194,10 @@ class Migration(migrations.Migration):
                 ("updated_at", models.DateTimeField(auto_now=True)),
                 (
                     "diet",
-                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="nutrition.diet"),
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="nutrition.diet",
+                    ),
                 ),
             ],
         ),
@@ -200,7 +213,10 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("barcode", models.CharField(blank=True, max_length=255, null=True)),
+                (
+                    "barcode",
+                    models.CharField(blank=True, max_length=255, null=True),
+                ),
                 ("quantity", models.FloatField()),
                 ("unit", models.CharField(max_length=255)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
@@ -214,7 +230,10 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "meal",
-                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="nutrition.meal"),
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="nutrition.meal",
+                    ),
                 ),
             ],
         ),
@@ -230,7 +249,10 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("barcode", models.CharField(blank=True, max_length=255, null=True)),
+                (
+                    "barcode",
+                    models.CharField(blank=True, max_length=255, null=True),
+                ),
                 ("description", models.TextField(blank=True, null=True)),
                 (
                     "preference_type",
@@ -276,7 +298,10 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("meal_name", models.CharField(blank=True, max_length=255, null=True)),
+                (
+                    "meal_name",
+                    models.CharField(blank=True, max_length=255, null=True),
+                ),
                 ("quantity_grams", models.FloatField(blank=True, null=True)),
                 ("calories", models.FloatField(blank=True, null=True)),
                 ("proteins", models.FloatField(blank=True, null=True)),
@@ -285,7 +310,9 @@ class Migration(migrations.Migration):
                 ("timestamp", models.DateTimeField()),
                 (
                     "photo",
-                    models.ImageField(blank=True, null=True, upload_to="meal_photos/"),
+                    models.ImageField(
+                        blank=True, null=True, upload_to="meal_photos/"
+                    ),
                 ),
                 ("feedback", models.TextField(blank=True, null=True)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),

@@ -72,7 +72,6 @@ def enable_db_access_for_all_tests(db_with_migrations):
     """
     Enable database access for all tests.
     """
-    pass
 
 
 @pytest.fixture
@@ -101,7 +100,9 @@ def user():
     """
     from django.contrib.auth.models import User
 
-    return User.objects.create_user(username="testuser", email="test@example.com", password="testpass123")
+    return User.objects.create_user(
+        username="testuser", email="test@example.com", password="testpass123"
+    )
 
 
 @pytest.fixture
@@ -111,4 +112,6 @@ def superuser():
     """
     from django.contrib.auth.models import User
 
-    return User.objects.create_superuser(username="admin", email="admin@example.com", password="adminpass123")
+    return User.objects.create_superuser(
+        username="admin", email="admin@example.com", password="adminpass123"
+    )

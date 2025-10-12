@@ -38,8 +38,12 @@ class GoalCreateSerializer(serializers.ModelSerializer):
 
 class BodyMeasurementSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
-    metric_display = serializers.CharField(source="get_metric_display", read_only=True)
-    measurement_type_display = serializers.CharField(source="get_measurement_type_display", read_only=True)
+    metric_display = serializers.CharField(
+        source="get_metric_display", read_only=True
+    )
+    measurement_type_display = serializers.CharField(
+        source="get_measurement_type_display", read_only=True
+    )
 
     class Meta:
         model = BodyMeasurement
@@ -71,5 +75,7 @@ class BodyMeasurementBulkSerializer(serializers.Serializer):
         measurements_data = validated_data["measurements"]
         measurements = []
         for measurement_data in measurements_data:
-            measurements.append(BodyMeasurement.objects.create(**measurement_data))
+            measurements.append(
+                BodyMeasurement.objects.create(**measurement_data)
+            )
         return measurements

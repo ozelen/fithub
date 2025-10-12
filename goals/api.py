@@ -37,7 +37,9 @@ class GoalViewSet(viewsets.ModelViewSet):
     def activate(self, request, pk=None):
         """Activate a goal (deactivates others)"""
         goal = self.get_object()
-        Goal.objects.filter(user=request.user, is_active=True).update(is_active=False)
+        Goal.objects.filter(user=request.user, is_active=True).update(
+            is_active=False
+        )
         goal.is_active = True
         goal.save()
         return Response({"status": "goal activated"})
@@ -73,7 +75,9 @@ class GoalViewSet(viewsets.ModelViewSet):
     def upcoming(self, request):
         """Get goals with upcoming target dates"""
         today = date.today()
-        upcoming_goals = Goal.objects.filter(user=request.user, target_date__gte=today, is_active=True).order_by("target_date")
+        upcoming_goals = Goal.objects.filter(
+            user=request.user, target_date__gte=today, is_active=True
+        ).order_by("target_date")
 
         serializer = self.get_serializer(upcoming_goals, many=True)
         return Response(serializer.data)
@@ -82,7 +86,9 @@ class GoalViewSet(viewsets.ModelViewSet):
     def overdue(self, request):
         """Get overdue goals"""
         today = date.today()
-        overdue_goals = Goal.objects.filter(user=request.user, target_date__lt=today, is_active=True).order_by("target_date")
+        overdue_goals = Goal.objects.filter(
+            user=request.user, target_date__lt=today, is_active=True
+        ).order_by("target_date")
 
         serializer = self.get_serializer(overdue_goals, many=True)
         return Response(serializer.data)
@@ -95,7 +101,11 @@ class GoalViewSet(viewsets.ModelViewSet):
         # Get related measurements
         measurements = BodyMeasurement.objects.filter(
             user=request.user,
-            metric__in=["weight_kg", "body_fat_percentage", "muscle_mass_percentage"],
+            metric__in=[
+                "weight_kg",
+                "body_fat_percentage",
+                "muscle_mass_percentage",
+            ],
         ).order_by("timestamp")
 
         if not measurements.exists():
@@ -112,10 +122,17 @@ class GoalViewSet(viewsets.ModelViewSet):
 
         progress_data = {
             "goal": self.get_serializer(goal).data,
-            "latest_measurement": BodyMeasurementSerializer(latest_measurement).data,
-            "first_measurement": BodyMeasurementSerializer(first_measurement).data,
+            "latest_measurement": BodyMeasurementSerializer(
+                latest_measurement
+            ).data,
+            "first_measurement": BodyMeasurementSerializer(
+                first_measurement
+            ).data,
             "measurements_count": measurements.count(),
-            "days_since_start": (latest_measurement.timestamp.date() - first_measurement.timestamp.date()).days,
+            "days_since_start": (
+                latest_measurement.timestamp.date()
+                - first_measurement.timestamp.date()
+            ).days,
         }
 
         return Response(progress_data)
@@ -144,11 +161,20 @@ class BodyMeasurementViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"])
     def latest(self, request):
         """Get latest measurement for each metric"""
-        metrics = request.query_params.getlist("metrics", ["weight_kg", "body_fat_percentage", "muscle_mass_percentage"])
+        metrics = request.query_params.getlist(
+            "metrics",
+            ["weight_kg", "body_fat_percentage", "muscle_mass_percentage"],
+        )
 
         latest_measurements = []
         for metric in metrics:
-            latest = BodyMeasurement.objects.filter(user=request.user, metric=metric).order_by("-timestamp").first()
+            latest = (
+                BodyMeasurement.objects.filter(
+                    user=request.user, metric=metric
+                )
+                .order_by("-timestamp")
+                .first()
+            )
 
             if latest:
                 latest_measurements.append(self.get_serializer(latest).data)
@@ -165,7 +191,9 @@ class BodyMeasurementViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        measurements = BodyMeasurement.objects.filter(user=request.user, metric=metric).order_by("-timestamp")
+        measurements = BodyMeasurement.objects.filter(
+            user=request.user, metric=metric
+        ).order_by("-timestamp")
 
         serializer = self.get_serializer(measurements, many=True)
         return Response(serializer.data)
@@ -221,7 +249,13 @@ class BodyMeasurementViewSet(viewsets.ModelViewSet):
 
         summary = {}
         for metric in metrics:
-            latest = BodyMeasurement.objects.filter(user=request.user, metric=metric).order_by("-timestamp").first()
+            latest = (
+                BodyMeasurement.objects.filter(
+                    user=request.user, metric=metric
+                )
+                .order_by("-timestamp")
+                .first()
+            )
 
             if latest:
                 summary[metric] = {
@@ -245,7 +279,9 @@ class BodyMeasurementViewSet(viewsets.ModelViewSet):
                 created_measurements.append(measurement)
             else:
                 return Response(
-                    {"error": f"Invalid measurement data: {serializer.errors}"},
+                    {
+                        "error": f"Invalid measurement data: {serializer.errors}"
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 

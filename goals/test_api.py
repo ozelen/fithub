@@ -154,7 +154,12 @@ class GoalsAPITestCase(APITestCase):
             value=80.0,
             timestamp=timezone.now() - timedelta(days=30),
         )
-        measurement2 = BodyMeasurementFactory(user=self.user, metric="weight_kg", value=75.0, timestamp=timezone.now())
+        measurement2 = BodyMeasurementFactory(
+            user=self.user,
+            metric="weight_kg",
+            value=75.0,
+            timestamp=timezone.now(),
+        )
 
         url = reverse("goal-progress", kwargs={"pk": goal.id})
         response = self.client.get(url)
@@ -169,7 +174,9 @@ class GoalsAPITestCase(APITestCase):
         """Test that authenticated users can list their measurements"""
         measurement1 = BodyMeasurementFactory(user=self.user)
         measurement2 = BodyMeasurementFactory(user=self.user)
-        measurement3 = BodyMeasurementFactory(user=self.other_user)  # Should not appear
+        measurement3 = BodyMeasurementFactory(
+            user=self.other_user
+        )  # Should not appear
 
         url = reverse("bodymeasurement-list")
         response = self.client.get(url)
@@ -209,25 +216,40 @@ class GoalsAPITestCase(APITestCase):
             timestamp=timezone.now() - timedelta(days=1),
         )
         weight_measurement_latest = BodyMeasurementFactory(
-            user=self.user, metric="weight_kg", value=74.5, timestamp=timezone.now()
+            user=self.user,
+            metric="weight_kg",
+            value=74.5,
+            timestamp=timezone.now(),
         )
-        body_fat_measurement = BodyMeasurementFactory(user=self.user, metric="body_fat_percentage", value=15.0)
+        body_fat_measurement = BodyMeasurementFactory(
+            user=self.user, metric="body_fat_percentage", value=15.0
+        )
 
         url = reverse("bodymeasurement-latest")
-        response = self.client.get(url, {"metrics": ["weight_kg", "body_fat_percentage"]})
+        response = self.client.get(
+            url, {"metrics": ["weight_kg", "body_fat_percentage"]}
+        )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
 
         # Check that we get the latest weight measurement
-        weight_data = next(m for m in response.data if m["metric"] == "weight_kg")
+        weight_data = next(
+            m for m in response.data if m["metric"] == "weight_kg"
+        )
         self.assertEqual(weight_data["value"], 74.5)
 
     def test_body_measurement_by_metric(self):
         """Test getting measurements by specific metric"""
-        weight_measurement1 = BodyMeasurementFactory(user=self.user, metric="weight_kg", value=75.0)
-        weight_measurement2 = BodyMeasurementFactory(user=self.user, metric="weight_kg", value=74.5)
-        body_fat_measurement = BodyMeasurementFactory(user=self.user, metric="body_fat_percentage", value=15.0)
+        weight_measurement1 = BodyMeasurementFactory(
+            user=self.user, metric="weight_kg", value=75.0
+        )
+        weight_measurement2 = BodyMeasurementFactory(
+            user=self.user, metric="weight_kg", value=74.5
+        )
+        body_fat_measurement = BodyMeasurementFactory(
+            user=self.user, metric="body_fat_percentage", value=15.0
+        )
 
         url = reverse("bodymeasurement-by-metric")
         response = self.client.get(url, {"metric": "weight_kg"})
@@ -259,8 +281,12 @@ class GoalsAPITestCase(APITestCase):
 
     def test_body_measurement_summary(self):
         """Test getting measurement summary for all metrics"""
-        weight_measurement = BodyMeasurementFactory(user=self.user, metric="weight_kg", value=75.0)
-        body_fat_measurement = BodyMeasurementFactory(user=self.user, metric="body_fat_percentage", value=15.0)
+        weight_measurement = BodyMeasurementFactory(
+            user=self.user, metric="weight_kg", value=75.0
+        )
+        body_fat_measurement = BodyMeasurementFactory(
+            user=self.user, metric="body_fat_percentage", value=15.0
+        )
 
         url = reverse("bodymeasurement-summary")
         response = self.client.get(url)
@@ -269,7 +295,9 @@ class GoalsAPITestCase(APITestCase):
         self.assertIn("weight_kg", response.data)
         self.assertIn("body_fat_percentage", response.data)
         self.assertEqual(response.data["weight_kg"]["latest_value"], 75.0)
-        self.assertEqual(response.data["body_fat_percentage"]["latest_value"], 15.0)
+        self.assertEqual(
+            response.data["body_fat_percentage"]["latest_value"], 15.0
+        )
 
     def test_body_measurement_bulk_create(self):
         """Test creating multiple measurements at once"""
@@ -305,7 +333,10 @@ class GoalsAPITestCase(APITestCase):
         response = self.client.get(url)
 
         # JWT authentication returns 401, Token authentication returns 403
-        self.assertIn(response.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
+        self.assertIn(
+            response.status_code,
+            [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN],
+        )
 
     def test_cross_user_access_denied(self):
         """Test that users cannot access other users' data"""
@@ -339,7 +370,9 @@ class GoalsAPITestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 1)
-        self.assertEqual(response.data["results"][0]["id"], str(active_goal.id))
+        self.assertEqual(
+            response.data["results"][0]["id"], str(active_goal.id)
+        )
 
     def test_search(self):
         """Test search functionality"""
@@ -355,12 +388,22 @@ class GoalsAPITestCase(APITestCase):
 
     def test_ordering(self):
         """Test ordering functionality"""
-        goal1 = GoalFactory(user=self.user, target_date=date.today() + timedelta(days=30))
-        goal2 = GoalFactory(user=self.user, target_date=date.today() + timedelta(days=10))
+        goal1 = GoalFactory(
+            user=self.user, target_date=date.today() + timedelta(days=30)
+        )
+        goal2 = GoalFactory(
+            user=self.user, target_date=date.today() + timedelta(days=10)
+        )
 
         url = reverse("goal-list")
         response = self.client.get(url, {"ordering": "target_date"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["results"][0]["target_date"], goal2.target_date.isoformat())
-        self.assertEqual(response.data["results"][1]["target_date"], goal1.target_date.isoformat())
+        self.assertEqual(
+            response.data["results"][0]["target_date"],
+            goal2.target_date.isoformat(),
+        )
+        self.assertEqual(
+            response.data["results"][1]["target_date"],
+            goal1.target_date.isoformat(),
+        )

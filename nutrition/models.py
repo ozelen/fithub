@@ -26,7 +26,9 @@ class Diet(models.Model):
     def save(self, *args, **kwargs):
         # Ensure only one diet is active per user
         if self.is_active:
-            Diet.objects.filter(user=self.user, is_active=True).exclude(id=self.id).update(is_active=False)
+            Diet.objects.filter(user=self.user, is_active=True).exclude(
+                id=self.id
+            ).update(is_active=False)
         super().save(*args, **kwargs)
 
 
@@ -38,7 +40,9 @@ class Meal(models.Model):
     # Calendar scheduling
     is_scheduled = models.BooleanField(default=False)
     start_date = models.DateField(null=True, blank=True)
-    end_date = models.DateField(null=True, blank=True, help_text="End date for recurrent meals")
+    end_date = models.DateField(
+        null=True, blank=True, help_text="End date for recurrent meals"
+    )
     start_time = models.TimeField(null=True, blank=True)
     duration_minutes = models.IntegerField(default=30)
 
@@ -51,7 +55,9 @@ class Meal(models.Model):
         ("weekend", "Weekends (Sat-Sun)"),
         ("custom", "Custom"),
     ]
-    recurrence_type = models.CharField(max_length=10, choices=RECURRENCE_TYPES, default="none")
+    recurrence_type = models.CharField(
+        max_length=10, choices=RECURRENCE_TYPES, default="none"
+    )
     recurrence_until = models.DateField(null=True, blank=True)
 
     # Google Calendar integration
@@ -67,7 +73,9 @@ class Meal(models.Model):
         ("post_workout", "Post-Workout"),
         ("snack", "Snack"),
     ]
-    meal_type = models.CharField(max_length=20, choices=MEAL_TYPES, default="regular")
+    meal_type = models.CharField(
+        max_length=20, choices=MEAL_TYPES, default="regular"
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -112,7 +120,9 @@ class Meal(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
-    parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True)
+    parent = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -122,7 +132,9 @@ class Category(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=255)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, null=True, blank=True
+    )
     proteins = models.FloatField()
     fats = models.FloatField()
     carbs = models.FloatField()
@@ -130,8 +142,12 @@ class Ingredient(models.Model):
     fibers = models.FloatField()
     sugars = models.FloatField()
     description = models.TextField(null=True, blank=True)
-    is_personal = models.BooleanField(default=False, help_text="Personal ingredient created by user")
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    is_personal = models.BooleanField(
+        default=False, help_text="Personal ingredient created by user"
+    )
+    created_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, blank=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -155,7 +171,9 @@ class MealIngredient(models.Model):
 
 class MealRecord(models.Model):
     # For planned meals (linked to existing meal)
-    meal = models.ForeignKey(Meal, on_delete=models.CASCADE, null=True, blank=True)
+    meal = models.ForeignKey(
+        Meal, on_delete=models.CASCADE, null=True, blank=True
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     # For unplanned meals (direct nutritional info)
@@ -240,7 +258,9 @@ class MealPreference(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     barcode = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    preference_type = models.CharField(max_length=255, choices=PREFERENCE_TYPES)
+    preference_type = models.CharField(
+        max_length=255, choices=PREFERENCE_TYPES
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

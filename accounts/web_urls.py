@@ -3,22 +3,22 @@ Web URL configuration for the accounts app.
 """
 
 from django.urls import path
+
 from .web_views import (
-    web_register,
-    web_login,
-    web_logout,
-    web_user_info,
-    web_auth_status,
-    web_update_profile,
     login_page,
     register_page,
+    web_auth_status,
+    web_login,
+    web_logout,
+    web_register,
+    web_update_profile,
+    web_user_info,
 )
 
 urlpatterns = [
     # Template-based pages
     path("signup/", register_page, name="signup-page"),
     path("signin/", login_page, name="login-page"),
-    
     # Web authentication API endpoints
     path("register/", web_register, name="web-register"),
     path("login/", web_login, name="web-login"),

@@ -11,7 +11,7 @@ from .factories import (
     MealRecordFactory,
     UserFactory,
 )
-from .models import Diet, MealIngredient, MealPreference, MealRecord
+from .models import Diet, MealIngredient
 
 
 class NutritionAPITestCase(APITestCase):
@@ -109,8 +109,12 @@ class NutritionAPITestCase(APITestCase):
         """Test getting nutrition summary for a meal"""
         diet = DietFactory(user=self.user)
         meal = MealFactory(diet=diet)
-        ingredient = IngredientFactory(calories=100, proteins=10, fats=5, carbs=20)
-        MealIngredientFactory(meal=meal, ingredient=ingredient, quantity=200)  # 200g
+        ingredient = IngredientFactory(
+            calories=100, proteins=10, fats=5, carbs=20
+        )
+        MealIngredientFactory(
+            meal=meal, ingredient=ingredient, quantity=200
+        )  # 200g
 
         url = reverse("meal-nutrition-summary", kwargs={"pk": meal.id})
         response = self.client.get(url)
@@ -140,9 +144,13 @@ class NutritionAPITestCase(APITestCase):
 
     def test_ingredient_personal(self):
         """Test getting user's personal ingredients"""
-        personal_ingredient = IngredientFactory(created_by=self.user, is_personal=True)
+        personal_ingredient = IngredientFactory(
+            created_by=self.user, is_personal=True
+        )
         public_ingredient = IngredientFactory(is_personal=False)
-        other_personal = IngredientFactory(created_by=self.other_user, is_personal=True)
+        other_personal = IngredientFactory(
+            created_by=self.other_user, is_personal=True
+        )
 
         url = reverse("ingredient-personal")
         response = self.client.get(url)
@@ -159,7 +167,9 @@ class NutritionAPITestCase(APITestCase):
 
         record1 = MealRecordFactory(user=self.user, timestamp=timezone.now())
         record2 = MealRecordFactory(user=self.user, timestamp=timezone.now())
-        record3 = MealRecordFactory(user=self.other_user, timestamp=timezone.now())
+        record3 = MealRecordFactory(
+            user=self.other_user, timestamp=timezone.now()
+        )
 
         url = reverse("mealrecord-today")
         response = self.client.get(url)
@@ -191,14 +201,22 @@ class NutritionAPITestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["period_days"], 7)
-        self.assertEqual(response.data["total_calories"], 2800)  # Sum of 100+200+...+700
+        self.assertEqual(
+            response.data["total_calories"], 2800
+        )  # Sum of 100+200+...+700
         self.assertEqual(response.data["record_count"], 7)
 
     def test_meal_preference_by_type(self):
         """Test getting preferences by type"""
-        love_pref = MealPreferenceFactory(user=self.user, preference_type="love")
-        like_pref = MealPreferenceFactory(user=self.user, preference_type="like")
-        dislike_pref = MealPreferenceFactory(user=self.user, preference_type="dislike")
+        love_pref = MealPreferenceFactory(
+            user=self.user, preference_type="love"
+        )
+        like_pref = MealPreferenceFactory(
+            user=self.user, preference_type="like"
+        )
+        dislike_pref = MealPreferenceFactory(
+            user=self.user, preference_type="dislike"
+        )
 
         url = reverse("mealpreference-by-type")
         response = self.client.get(url, {"type": "love"})
@@ -215,7 +233,10 @@ class NutritionAPITestCase(APITestCase):
         response = self.client.get(url)
 
         # JWT authentication returns 401, Token authentication returns 403
-        self.assertIn(response.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
+        self.assertIn(
+            response.status_code,
+            [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN],
+        )
 
     def test_cross_user_access_denied(self):
         """Test that users cannot access other users' data"""

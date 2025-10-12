@@ -37,8 +37,14 @@ class Migration(migrations.Migration):
                             ("hip_cm", "Hip (cm)"),
                             ("neck_cm", "Neck (cm)"),
                             ("arm_circumference_cm", "Arm Circumference (cm)"),
-                            ("thigh_circumference_cm", "Thigh Circumference (cm)"),
-                            ("calf_circumference_cm", "Calf Circumference (cm)"),
+                            (
+                                "thigh_circumference_cm",
+                                "Thigh Circumference (cm)",
+                            ),
+                            (
+                                "calf_circumference_cm",
+                                "Calf Circumference (cm)",
+                            ),
                             ("body_fat_percentage", "Body Fat (%)"),
                             ("muscle_mass_percentage", "Muscle Mass (%)"),
                             ("bmi_value", "BMI Value"),

@@ -41,7 +41,11 @@ class Goal(models.Model):
             "notes": self.notes,
             "created_at": self.created_at.isoformat(),  # type: ignore
             "updated_at": self.updated_at.isoformat(),  # type: ignore
-            "days_remaining": ((self.target_date - date.today()).days if self.target_date else None),
+            "days_remaining": (
+                (self.target_date - date.today()).days
+                if self.target_date
+                else None
+            ),
         }
 
     @property
@@ -71,8 +75,12 @@ class BodyMeasurement(models.Model):
         ("log", "Log"),
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    metric = models.CharField(max_length=50, choices=BODY_METRICS, default="weight_kg")
-    measurement_type = models.CharField(max_length=50, choices=MEASUREMENT_TYPES)
+    metric = models.CharField(
+        max_length=50, choices=BODY_METRICS, default="weight_kg"
+    )
+    measurement_type = models.CharField(
+        max_length=50, choices=MEASUREMENT_TYPES
+    )
     value = models.FloatField()
     timestamp = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
