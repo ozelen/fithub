@@ -33,23 +33,38 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
-# ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost:8000,127.0.0.1").split(",")
+ALLOWED_HOSTS = ["*"]
 
 CORS_ALLOWED_ORIGINS = os.environ.get(
     "CORS_ALLOWED_ORIGINS",
-    "http://localhost:8080,http://127.0.0.1:8080,https://hub.zelen.uk",
+    "http://localhost:8080,http://127.0.0.1:8080,http://localhost:8787,https://hub.zelen.uk,https://fitbot.zelen.uk,https://*.workers.dev,https://*.pages.dev",
 ).split(",")
 
 CORS_ORIGIN_WHITELIST = os.environ.get(
     "CORS_ORIGIN_WHITELIST",
-    "localhost:8080,localhost:8081,localhost,localhost:8888,hub.zelen.uk",
+    "localhost:8080,localhost:8081,localhost,localhost:8888,localhost:8787,hub.zelen.uk,fitbot.zelen.uk,*.workers.dev,*.pages.dev",
 ).split(",")
 
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     "CSRF_TRUSTED_ORIGINS",
-    "http://localhost:8000,http://127.0.0.1:8000,https://hub.zelen.uk",
+    "http://localhost:8000,http://127.0.0.1:8000,http://localhost:8787,https://hub.zelen.uk,https://fitbot.zelen.uk,https://*.workers.dev,https://*.pages.dev",
 ).split(",")
+
+# Additional CORS settings
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True  # For development only
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 
 # Application definition
@@ -72,6 +87,7 @@ INSTALLED_APPS = [
     "fitbot",
     "nutrition",
     "goals",
+    "accounts",
 ]
 
 MIDDLEWARE = [
@@ -199,6 +215,7 @@ SPECTACULAR_SETTINGS = {
     "SCHEMA_PATH_PREFIX": "/api/",
     "TAGS": [
         {"name": "Authentication", "description": "Authentication endpoints"},
+        {"name": "Accounts", "description": "User registration and profile management"},
         {"name": "Nutrition", "description": "Diet, meal, and ingredient management"},
         {"name": "Goals", "description": "Goal tracking and body measurements"},
     ],

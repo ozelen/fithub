@@ -24,9 +24,12 @@ urlpatterns = [
     path("", include("home.urls")),
     # Authentication
     path("api/auth/", include("authentication.urls")),
+    # Web Authentication (for frontend apps)
+    path("auth/", include("accounts.web_urls")),
     # API Endpoints
     path("api/nutrition/", include("nutrition.api_urls")),
     path("api/goals/", include("goals.api_urls")),
+    path("api/accounts/", include("accounts.api_urls")),
     # API Documentation
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
