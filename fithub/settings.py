@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.postgres",
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
@@ -88,6 +89,7 @@ INSTALLED_APPS = [
     "nutrition",
     "goals",
     "accounts",
+    "facts",
 ]
 
 MIDDLEWARE = [
@@ -250,3 +252,6 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
+
+# Open Food Facts asks reusers to identify themselves; their static host rate-limits anonymous clients.
+OFF_USER_AGENT = os.environ.get("OFF_USER_AGENT", "fit.zelen.uk/0.1 (o@zelen.uk)")

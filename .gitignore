@@ -17,3 +17,6 @@ safety-report.json
 htmlcov/
 .coverage
 coverage.xml
+
+# Local secrets
+.env

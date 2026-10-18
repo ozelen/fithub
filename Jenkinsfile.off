@@ -1,0 +1,29 @@
+// Job `fithub-off-import`: Pipeline from SCM, script path `Jenkinsfile.off`, Build periodically `H 7 * * *`
+// (OFF publishes the daily delta around 06:20 UTC). Tick FULL for the monthly Parquet reload (`H 5 1 * *`).
+pipeline {
+  agent any
+  parameters {
+    booleanParam(name: 'FULL', defaultValue: false, description: 'Replace facts_product from the nightly Parquet export instead of applying deltas')
+    booleanParam(name: 'TAXONOMY', defaultValue: false, description: 'Also reload the categories taxonomy')
+  }
+  stages {
+    stage('Import') {
+      steps {
+        withCredentials([sshUserPrivateKey(credentialsId: 'ozelen', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+          sh '''
+            set -eu
+            ARGS=""
+            [ "${FULL:-false}" = "true" ] && ARGS="$ARGS --full"
+            [ "${TAXONOMY:-false}" = "true" ] && ARGS="$ARGS --taxonomy"
+            ssh -i "$SSH_KEY" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new \
+              "${SSH_USER}@192.168.1.185" "bash -s -- ${ARGS}" <<'REMOTE'
+            set -eu
+            cd /
+            sudo k3s kubectl -n ix-fithub exec deploy/fithub-ix-chart -- uv run manage.py import_openfoodfacts "$@"
+REMOTE
+          '''
+        }
+      }
+    }
+  }
+}

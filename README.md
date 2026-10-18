@@ -109,3 +109,26 @@ fithub/
 ## 📄 License
 
 MIT License - see LICENSE file for details.
+
+## Open Food Facts data (`facts` app)
+
+`facts_product` holds the global OFF catalogue trimmed to barcode, names, stores, countries, categories and
+per-100g nutrients. `facts_category_nutrition` is a materialized view with median nutrients per category
+(the "generic basmati rice"); `facts_category` is the OFF taxonomy (names in many languages, parents).
+
+```bash
+uv run manage.py import_openfoodfacts --taxonomy --full   # one-off: categories + full Parquet snapshot (~4.8M rows)
+uv run manage.py import_openfoodfacts                      # nightly: apply the OFF daily deltas not applied yet
+uv run manage.py import_openfoodfacts --file delta.json.gz # local test with one downloaded delta
+```
+
+API: `GET /api/facts/products/?q=basmati&country=en:spain`, `GET /api/facts/products/8414807516336/`,
+`GET /api/facts/categories/en:basmati-rices/`. OFF rate-limits anonymous clients: `OFF_USER_AGENT` identifies us.
+
+## Production (TrueNAS)
+
+Push to `main`. GitHub Actions runs the tests, pushes `zelenuk/fithub:<git sha>` (and `:latest`) and POSTs
+`IMAGE_TAG` to Jenkins; the `labhub-deploy` job (`Jenkinsfile`) runs `kubectl set image` on `ix-fithub`.
+Secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`, `JENKINS_DEPLOY_URL`, `JENKINS_USER`, `JENKINS_TOKEN`.
+Nightly jobs: `fithub-backup` (`Jenkinsfile.backup`, dumps to `lake/fit/backups`) and `fithub-off-import`
+(`Jenkinsfile.off`, OFF deltas; run with FULL once a month). TrueNAS caches `:latest`, so deployments are pinned to the SHA.

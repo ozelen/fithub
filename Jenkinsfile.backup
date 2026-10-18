@@ -1,0 +1,37 @@
+// Job `fithub-backup`: Pipeline from SCM, script path `Jenkinsfile.backup`, Build periodically `H 3 * * *`.
+// Writes /mnt/lake/fit/backups/fithub-YYYYMMDDThhmmssZ.dump. facts_* tables are reproducible and excluded.
+pipeline {
+  agent any
+  parameters {
+    string(name: 'KEEP_DAYS', defaultValue: '14', description: 'Delete dumps older than this many days')
+  }
+  stages {
+    stage('Dump') {
+      steps {
+        withCredentials([sshUserPrivateKey(credentialsId: 'ozelen', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+          sh '''
+            set -eu
+            ssh -i "$SSH_KEY" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new \
+              "${SSH_USER}@192.168.1.185" "bash -s -- ${KEEP_DAYS:-14}" <<'REMOTE'
+            set -eu
+            cd /
+            KEEP="${1:?KEEP_DAYS required}"
+            DEST=/mnt/lake/fit/backups
+            [ -d /mnt/lake/fit ] || sudo /sbin/zfs create lake/fit
+            [ -d "$DEST" ] || sudo /sbin/zfs create lake/fit/backups
+            sudo chown apps:apps "$DEST"
+            stamp=$(date -u +%Y%m%dT%H%M%SZ)
+            tmp=$(mktemp)
+            trap 'rm -f "$tmp"' EXIT
+            sudo k3s kubectl -n ix-postgres16 exec deploy/postgres16-ix-chart -- \
+              pg_dump -U postgres -Fc --exclude-table-data='facts_*' labhub > "$tmp"
+            sudo install -o apps -g apps -m 640 "$tmp" "$DEST/fithub-$stamp.dump"
+            sudo find "$DEST" -name 'fithub-*.dump' -type f -mtime +"$KEEP" -delete
+            ls -lh "$DEST/fithub-$stamp.dump"
+REMOTE
+          '''
+        }
+      }
+    }
+  }
+}
