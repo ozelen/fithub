@@ -128,7 +128,7 @@ API: `GET /api/facts/products/?q=basmati&country=en:spain`, `GET /api/facts/prod
 ## Production (TrueNAS)
 
 Push to `main`. GitHub Actions runs the tests, pushes `zelenuk/fithub:<git sha>` (and `:latest`) and POSTs
-`IMAGE_TAG` to Jenkins; the `labhub-deploy` job (`Jenkinsfile`) runs `kubectl set image` on `ix-fithub`.
+`IMAGE_TAG` to Jenkins; the `fithub-deploy` job (`Jenkinsfile`) runs `kubectl set image` on `ix-fithub`.
 Secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`, `JENKINS_DEPLOY_URL`, `JENKINS_USER`, `JENKINS_TOKEN`.
 Nightly jobs: `fithub-backup` (`Jenkinsfile.backup`, dumps to `lake/fit/backups`) and `fithub-off-import`
 (`Jenkinsfile.off`, OFF deltas; run with FULL once a month). TrueNAS caches `:latest`, so deployments are pinned to the SHA.

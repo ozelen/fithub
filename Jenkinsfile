@@ -1,4 +1,4 @@
-// Deploy job `labhub-deploy`: Pipeline from SCM, this file. Triggered by GitHub Actions with IMAGE_TAG (git SHA).
+// Deploy job `fithub-deploy`: Pipeline from SCM, this file. Triggered by GitHub Actions with IMAGE_TAG (git SHA).
 // Jenkins credential ID must be `ozelen` (SSH Username with private key). Never put a key in this repo.
 pipeline {
   agent any
