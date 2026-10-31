@@ -2,26 +2,35 @@ from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 
-NUTRIENTS = ("energy_kcal", "fat", "saturated_fat", "carbohydrates", "sugars", "fiber", "proteins", "salt")
+NUTRIENTS = (
+    "energy_kcal",
+    "fat",
+    "saturated_fat",
+    "carbohydrates",
+    "sugars",
+    "fiber",
+    "proteins",
+    "salt",
+)
 
 
 class Product(models.Model):
     """One Open Food Facts product, trimmed to what calorie counting needs. Nutrient values are per `per`."""
 
     code = models.CharField(primary_key=True, max_length=64)
-    name = models.CharField(max_length=512, blank=True, default="")
-    brands = models.CharField(max_length=512, blank=True, default="")
-    quantity = models.CharField(max_length=128, blank=True, default="")
-    serving_size = models.CharField(max_length=128, blank=True, default="")
+    name = models.TextField(blank=True, default="")
+    brands = models.TextField(blank=True, default="")
+    quantity = models.TextField(blank=True, default="")
+    serving_size = models.TextField(blank=True, default="")
     serving_quantity = models.FloatField(null=True, blank=True)
-    stores_tags = ArrayField(models.CharField(max_length=128), default=list, blank=True)
-    countries_tags = ArrayField(models.CharField(max_length=128), default=list, blank=True)
-    categories_tags = ArrayField(models.CharField(max_length=256), default=list, blank=True)
-    nutriscore_grade = models.CharField(max_length=16, blank=True, default="")
+    stores_tags = ArrayField(models.TextField(), default=list, blank=True)
+    countries_tags = ArrayField(models.TextField(), default=list, blank=True)
+    categories_tags = ArrayField(models.TextField(), default=list, blank=True)
+    nutriscore_grade = models.TextField(blank=True, default="")
     completeness = models.FloatField(default=0)
     obsolete = models.BooleanField(default=False)
     last_modified_t = models.BigIntegerField(default=0)
-    per = models.CharField(max_length=8, blank=True, default="")
+    per = models.TextField(blank=True, default="")
     energy_kcal = models.FloatField(null=True, blank=True)
     fat = models.FloatField(null=True, blank=True)
     saturated_fat = models.FloatField(null=True, blank=True)
@@ -34,7 +43,11 @@ class Product(models.Model):
     class Meta:
         indexes = [
             GinIndex(fields=["categories_tags"], name="facts_product_cats_gin"),
-            GinIndex(fields=["name"], name="facts_product_name_trgm", opclasses=["gin_trgm_ops"]),
+            GinIndex(
+                fields=["name"],
+                name="facts_product_name_trgm",
+                opclasses=["gin_trgm_ops"],
+            ),
         ]
 
     def __str__(self):
