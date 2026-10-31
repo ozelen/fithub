@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     "goals",
     "accounts",
     "facts",
+    "plan",
 ]
 
 MIDDLEWARE = [

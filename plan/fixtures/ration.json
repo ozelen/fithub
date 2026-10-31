@@ -1,0 +1,1560 @@
+{
+ "activity_types": [
+  {
+   "name": "Сидяча робота (офіс)",
+   "met": 1.2,
+   "protein_g_per_kg": 1.5,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Стояча робота",
+   "met": 2.0,
+   "protein_g_per_kg": 1.6,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Фізична праця ( Садівництво, Ручна праця на будівництві)",
+   "met": 5.0,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Фізична праця (Робота вантажника, з перенесенням ваги)",
+   "met": 7.0,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Силове Тренування (без відмовних підходів)",
+   "met": 3.0,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Силове Тренування (з відмовними підходами)",
+   "met": 6.0,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Біг повільний (~8 км/год)",
+   "met": 8.2,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Біг помірний (~10 км/год)",
+   "met": 10.3,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Біг швидкий (~12 km/год)",
+   "met": 12.9,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Біг інтервальний (спринти/біг)",
+   "met": 12.0,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Орбітрек середня інтенс.",
+   "met": 9.3,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Велотренажер помірна швидк.",
+   "met": 7.4,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Велотренажер висока інтенс.",
+   "met": 11.2,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Степпер середня інтенс.",
+   "met": 6.2,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Ходьба помірна швидк. (~5–6 км/год)",
+   "met": 3.8,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "HIIT (інтервальні)",
+   "met": 12.0,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Кросфіт",
+   "met": 13.7,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Йога (хатха)",
+   "met": 4.1,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Пілатес (мат, осн.)",
+   "met": 3.3,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Танці (повільні)",
+   "met": 3.1,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Танці (енергійні)",
+   "met": 6.2,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Бокс / кікбокс",
+   "met": 9.6,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Плавання (спокійне)",
+   "met": 6.2,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  },
+  {
+   "name": "Плавання (інтенсивне)",
+   "met": 10.3,
+   "protein_g_per_kg": 2.0,
+   "fat_g_per_kg": 1.0
+  }
+ ],
+ "categories": [
+  "М'ясо",
+  "Риба",
+  "Яйця",
+  "Кисломолочний Сир",
+  "Йогурти",
+  "Сири",
+  "Сироватковий протеїн",
+  "Горіхи",
+  "Олії",
+  "Масло",
+  "Насіння",
+  "Пасти",
+  "Крупи",
+  "Коренеплоди",
+  "Хлібці",
+  "Овочі та зелень",
+  "Фрукти",
+  "Сухофрукти"
+ ],
+ "products": [
+  {
+   "name": "Куряче Філе",
+   "category": "М'ясо",
+   "proteins": 19.0,
+   "fats": 2.4,
+   "carbs": 0
+  },
+  {
+   "name": "Куряче Стегно (Філе)",
+   "category": "М'ясо",
+   "proteins": 19.0,
+   "fats": 12.0,
+   "carbs": 0
+  },
+  {
+   "name": "Куряче Стегно",
+   "category": "М'ясо",
+   "proteins": 14.0,
+   "fats": 15.0,
+   "carbs": 0
+  },
+  {
+   "name": "Індичка (філе)",
+   "category": "М'ясо",
+   "proteins": 23.0,
+   "fats": 1.9,
+   "carbs": 0
+  },
+  {
+   "name": "Індича Гомілка",
+   "category": "М'ясо",
+   "proteins": 16.0,
+   "fats": 9.0,
+   "carbs": 0
+  },
+  {
+   "name": "Яловичий Гуляш",
+   "category": "М'ясо",
+   "proteins": 20.0,
+   "fats": 3.0,
+   "carbs": 0
+  },
+  {
+   "name": "Яловичий Биток",
+   "category": "М'ясо",
+   "proteins": 13.6,
+   "fats": 4.3,
+   "carbs": 0
+  },
+  {
+   "name": "Свиняча Вирізка",
+   "category": "М'ясо",
+   "proteins": 21.0,
+   "fats": 7.0,
+   "carbs": 0
+  },
+  {
+   "name": "Свинячий биток без кістки",
+   "category": "М'ясо",
+   "proteins": 19.0,
+   "fats": 12.3,
+   "carbs": 0
+  },
+  {
+   "name": "Форель, стейк",
+   "category": "Риба",
+   "proteins": 20.5,
+   "fats": 5.4,
+   "carbs": 0
+  },
+  {
+   "name": "Голець, стейк",
+   "category": "Риба",
+   "proteins": 19.0,
+   "fats": 11.5,
+   "carbs": 0
+  },
+  {
+   "name": "Сьомга, стейк",
+   "category": "Риба",
+   "proteins": 20.0,
+   "fats": 13.0,
+   "carbs": 0
+  },
+  {
+   "name": "Сибас (лаврак)",
+   "category": "Риба",
+   "proteins": 23.5,
+   "fats": 5.8,
+   "carbs": 0
+  },
+  {
+   "name": "Дорадо",
+   "category": "Риба",
+   "proteins": 10.0,
+   "fats": 12.0,
+   "carbs": 0
+  },
+  {
+   "name": "Короп",
+   "category": "Риба",
+   "proteins": 17.7,
+   "fats": 5.3,
+   "carbs": 0
+  },
+  {
+   "name": "Хек",
+   "category": "Риба",
+   "proteins": 13.0,
+   "fats": 1.6,
+   "carbs": 0
+  },
+  {
+   "name": "Тиляпія філе",
+   "category": "Риба",
+   "proteins": 18.2,
+   "fats": 3.3,
+   "carbs": 0
+  },
+  {
+   "name": "Скумбрія",
+   "category": "Риба",
+   "proteins": 18.0,
+   "fats": 13.2,
+   "carbs": 0
+  },
+  {
+   "name": "Оселедець (морожений)",
+   "category": "Риба",
+   "proteins": 17.0,
+   "fats": 22.0,
+   "carbs": 0
+  },
+  {
+   "name": "Сардина ( морожена)",
+   "category": "Риба",
+   "proteins": 21.0,
+   "fats": 6.0,
+   "carbs": 0
+  },
+  {
+   "name": "Тунець у власному соку (консервований)",
+   "category": "Риба",
+   "proteins": 23.0,
+   "fats": 2.5,
+   "carbs": 0
+  },
+  {
+   "name": "Тунець в олії (консервований)",
+   "category": "Риба",
+   "proteins": 23.0,
+   "fats": 10.0,
+   "carbs": 0
+  },
+  {
+   "name": "Куряче яйце",
+   "category": "Яйця",
+   "proteins": 12.58,
+   "fats": 9.73,
+   "carbs": 0
+  },
+  {
+   "name": "Білок курячого яйця",
+   "category": "Яйця",
+   "proteins": 11.3,
+   "fats": 0.8,
+   "carbs": 0
+  },
+  {
+   "name": "Яйця Перепелині",
+   "category": "Яйця",
+   "proteins": 13.0,
+   "fats": 11.0,
+   "carbs": 0
+  },
+  {
+   "name": "Сир кисломолочний нежирний 5%",
+   "category": "Кисломолочний Сир",
+   "proteins": 17.0,
+   "fats": 5.0,
+   "carbs": 1.8
+  },
+  {
+   "name": "Сир кисломолочний нежирний 0.2%",
+   "category": "Кисломолочний Сир",
+   "proteins": 16.0,
+   "fats": 0.2,
+   "carbs": 1.8
+  },
+  {
+   "name": "Сир кисломолочний 9%",
+   "category": "Кисломолочний Сир",
+   "proteins": 16.0,
+   "fats": 9.0,
+   "carbs": 2.0
+  },
+  {
+   "name": "Йогурт грецький 2.5%",
+   "category": "Йогурти",
+   "proteins": 10.0,
+   "fats": 2.5,
+   "carbs": 3.5
+  },
+  {
+   "name": "Йогурт 2% натуральний",
+   "category": "Йогурти",
+   "proteins": 3.0,
+   "fats": 2.0,
+   "carbs": 4.0
+  },
+  {
+   "name": "Пармезан",
+   "category": "Сири",
+   "proteins": 35.0,
+   "fats": 29.0,
+   "carbs": 3.0
+  },
+  {
+   "name": "Гауда",
+   "category": "Сири",
+   "proteins": 28.0,
+   "fats": 28.0,
+   "carbs": 1.0
+  },
+  {
+   "name": "Фета",
+   "category": "Сири",
+   "proteins": 14.0,
+   "fats": 21.0,
+   "carbs": 4.0
+  },
+  {
+   "name": "Бринза",
+   "category": "Сири",
+   "proteins": 17.0,
+   "fats": 21.0,
+   "carbs": 2.0
+  },
+  {
+   "name": "Горгонзола",
+   "category": "Сири",
+   "proteins": 20.0,
+   "fats": 25.0,
+   "carbs": 2.0
+  },
+  {
+   "name": "Камамбер",
+   "category": "Сири",
+   "proteins": 19.0,
+   "fats": 22.0,
+   "carbs": 0
+  },
+  {
+   "name": "Брі",
+   "category": "Сири",
+   "proteins": 20.0,
+   "fats": 24.0,
+   "carbs": 0
+  },
+  {
+   "name": "Amix Батончик TiggerZero -60",
+   "category": "Сири",
+   "proteins": 26.0,
+   "fats": 25.0,
+   "carbs": 32.0
+  },
+  {
+   "name": "Amix Exclusive Protein Bar",
+   "category": "Сири",
+   "proteins": 25.0,
+   "fats": 15.0,
+   "carbs": 41.0
+  },
+  {
+   "name": "Protein Chips Quest N -32g",
+   "category": "Сири",
+   "proteins": 60.0,
+   "fats": 15.0,
+   "carbs": 15.0
+  },
+  {
+   "name": "Creamy Rice",
+   "category": "Сири",
+   "proteins": 5.8,
+   "fats": 0,
+   "carbs": 75.36
+  },
+  {
+   "name": "MRE Meal Replacement",
+   "category": "Сири",
+   "proteins": 36.15,
+   "fats": 3.08,
+   "carbs": 57.69
+  },
+  {
+   "name": "Концентрат Білкової Сироватки WPC",
+   "category": "Сироватковий протеїн",
+   "proteins": 82.0,
+   "fats": 7.5,
+   "carbs": 4.0
+  },
+  {
+   "name": "Ізолят Білкової Сироватки",
+   "category": "Сироватковий протеїн",
+   "proteins": 90.0,
+   "fats": 0.3,
+   "carbs": 2.5
+  },
+  {
+   "name": "Волоські горіхи",
+   "category": "Горіхи",
+   "proteins": 15.0,
+   "fats": 65.0,
+   "carbs": 14.0
+  },
+  {
+   "name": "Арахіс",
+   "category": "Горіхи",
+   "proteins": 26.0,
+   "fats": 49.0,
+   "carbs": 16.0
+  },
+  {
+   "name": "Фундук",
+   "category": "Горіхи",
+   "proteins": 14.0,
+   "fats": 62.0,
+   "carbs": 17.0
+  },
+  {
+   "name": "Мигдаль",
+   "category": "Горіхи",
+   "proteins": 21.0,
+   "fats": 49.0,
+   "carbs": 22.0
+  },
+  {
+   "name": "Кеш'ю",
+   "category": "Горіхи",
+   "proteins": 18.0,
+   "fats": 44.0,
+   "carbs": 30.0
+  },
+  {
+   "name": "Кедровий горіх",
+   "category": "Горіхи",
+   "proteins": 13.0,
+   "fats": 68.0,
+   "carbs": 14.0
+  },
+  {
+   "name": "Фісташки",
+   "category": "Горіхи",
+   "proteins": 21.0,
+   "fats": 45.0,
+   "carbs": 28.0
+  },
+  {
+   "name": "Бразильські горіхи",
+   "category": "Горіхи",
+   "proteins": 14.0,
+   "fats": 67.0,
+   "carbs": 12.0
+  },
+  {
+   "name": "Пекан",
+   "category": "Горіхи",
+   "proteins": 9.0,
+   "fats": 72.0,
+   "carbs": 14.0
+  },
+  {
+   "name": "Оливкова олія",
+   "category": "Олії",
+   "proteins": 0.0,
+   "fats": 100.0,
+   "carbs": 0
+  },
+  {
+   "name": "Олія авокадо",
+   "category": "Олії",
+   "proteins": 0.0,
+   "fats": 100.0,
+   "carbs": 0
+  },
+  {
+   "name": "Олія з виноградних кісточок",
+   "category": "Олії",
+   "proteins": 0.0,
+   "fats": 100.0,
+   "carbs": 0
+  },
+  {
+   "name": "Олія розторопші",
+   "category": "Олії",
+   "proteins": 0.0,
+   "fats": 100.0,
+   "carbs": 0
+  },
+  {
+   "name": "Гарбузова олія",
+   "category": "Олії",
+   "proteins": 0.0,
+   "fats": 100.0,
+   "carbs": 0
+  },
+  {
+   "name": "Лляна олія",
+   "category": "Олії",
+   "proteins": 0.0,
+   "fats": 100.0,
+   "carbs": 0
+  },
+  {
+   "name": "Соняшникова олія",
+   "category": "Олії",
+   "proteins": 0.0,
+   "fats": 100.0,
+   "carbs": 0
+  },
+  {
+   "name": "Кокосова олія",
+   "category": "Олії",
+   "proteins": 0.0,
+   "fats": 100.0,
+   "carbs": 0
+  },
+  {
+   "name": "Вершкове масло 82%",
+   "category": "Масло",
+   "proteins": 0.5,
+   "fats": 82.5,
+   "carbs": 0.8
+  },
+  {
+   "name": "Гарбузове насіння",
+   "category": "Насіння",
+   "proteins": 24.0,
+   "fats": 45.0,
+   "carbs": 16.0
+  },
+  {
+   "name": "Соняшникове насіння",
+   "category": "Насіння",
+   "proteins": 21.0,
+   "fats": 51.0,
+   "carbs": 12.0
+  },
+  {
+   "name": "Кунжутове насіння",
+   "category": "Насіння",
+   "proteins": 18.0,
+   "fats": 50.0,
+   "carbs": 23.0
+  },
+  {
+   "name": "Льняне насіння",
+   "category": "Насіння",
+   "proteins": 18.0,
+   "fats": 42.0,
+   "carbs": 29.0
+  },
+  {
+   "name": "Арахісова паста",
+   "category": "Пасти",
+   "proteins": 25.8,
+   "fats": 48.2,
+   "carbs": 16.1
+  },
+  {
+   "name": "Мигдалева паста",
+   "category": "Пасти",
+   "proteins": 19.3,
+   "fats": 51.6,
+   "carbs": 22.5
+  },
+  {
+   "name": "Паста з фундука",
+   "category": "Пасти",
+   "proteins": 15.0,
+   "fats": 62.0,
+   "carbs": 18.0
+  },
+  {
+   "name": "Паста кеш'ю",
+   "category": "Пасти",
+   "proteins": 15.0,
+   "fats": 48.0,
+   "carbs": 31.0
+  },
+  {
+   "name": "Гречка",
+   "category": "Крупи",
+   "proteins": 12.6,
+   "fats": 3.3,
+   "carbs": 62.0
+  },
+  {
+   "name": "Розчинна Вівсянка Instant oats",
+   "category": "Крупи",
+   "proteins": 11.0,
+   "fats": 7.7,
+   "carbs": 62.0
+  },
+  {
+   "name": "Вівсянка",
+   "category": "Крупи",
+   "proteins": 12.3,
+   "fats": 6.1,
+   "carbs": 57.6
+  },
+  {
+   "name": "Кукурудзяна крупа",
+   "category": "Крупи",
+   "proteins": 9.0,
+   "fats": 1.2,
+   "carbs": 74.3
+  },
+  {
+   "name": "Булгур",
+   "category": "Крупи",
+   "proteins": 12.3,
+   "fats": 1.3,
+   "carbs": 71.2
+  },
+  {
+   "name": "Ячна крупа",
+   "category": "Крупи",
+   "proteins": 10.4,
+   "fats": 1.2,
+   "carbs": 68.2
+  },
+  {
+   "name": "Сream of rice",
+   "category": "Крупи",
+   "proteins": 7.6,
+   "fats": 0.7,
+   "carbs": 76.0
+  },
+  {
+   "name": "Кус Кус",
+   "category": "Крупи",
+   "proteins": 13.5,
+   "fats": 0.6,
+   "carbs": 74.9
+  },
+  {
+   "name": "Рис Басматі",
+   "category": "Крупи",
+   "proteins": 7.0,
+   "fats": 0.7,
+   "carbs": 77.5
+  },
+  {
+   "name": "Рис Жасмін",
+   "category": "Крупи",
+   "proteins": 7.0,
+   "fats": 0.8,
+   "carbs": 78.9
+  },
+  {
+   "name": "Рис Довгозернистий шліфований",
+   "category": "Крупи",
+   "proteins": 6.7,
+   "fats": 0.6,
+   "carbs": 79.2
+  },
+  {
+   "name": "Картопля",
+   "category": "Коренеплоди",
+   "proteins": 2.0,
+   "fats": 0.1,
+   "carbs": 17.0
+  },
+  {
+   "name": "Батат",
+   "category": "Коренеплоди",
+   "proteins": 1.4,
+   "fats": 0.2,
+   "carbs": 20.0
+  },
+  {
+   "name": "Морква",
+   "category": "Коренеплоди",
+   "proteins": 0.9,
+   "fats": 0.2,
+   "carbs": 6.9
+  },
+  {
+   "name": "Буряк",
+   "category": "Коренеплоди",
+   "proteins": 1.6,
+   "fats": 0.1,
+   "carbs": 8.8
+  },
+  {
+   "name": "Хлібці Житні Finn",
+   "category": "Хлібці",
+   "proteins": 9.0,
+   "fats": 3.0,
+   "carbs": 62.0
+  },
+  {
+   "name": "Хлібці Рисові",
+   "category": "Хлібці",
+   "proteins": 7.8,
+   "fats": 2.0,
+   "carbs": 82.0
+  },
+  {
+   "name": "Макарони з т.с.п.",
+   "category": "Хлібці",
+   "proteins": 12.0,
+   "fats": 2.0,
+   "carbs": 75.0
+  },
+  {
+   "name": "Хліб гречаний",
+   "category": "Хлібці",
+   "proteins": 8.4,
+   "fats": 1.8,
+   "carbs": 48.7
+  },
+  {
+   "name": "Хліб Тост злаковий",
+   "category": "Хлібці",
+   "proteins": 10.0,
+   "fats": 7.0,
+   "carbs": 53.0
+  },
+  {
+   "name": "Тортилья",
+   "category": "Хлібці",
+   "proteins": 9.0,
+   "fats": 8.0,
+   "carbs": 54.0
+  },
+  {
+   "name": "Лаваш Вірменський",
+   "category": "Хлібці",
+   "proteins": 7.0,
+   "fats": 1.8,
+   "carbs": 48.0
+  },
+  {
+   "name": "Цибуля",
+   "category": "Овочі та зелень",
+   "proteins": 1.2,
+   "fats": 0.1,
+   "carbs": 9.3
+  },
+  {
+   "name": "Броколі",
+   "category": "Овочі та зелень",
+   "proteins": 2.8,
+   "fats": 0.4,
+   "carbs": 6.6
+  },
+  {
+   "name": "Брюссельська капуста",
+   "category": "Овочі та зелень",
+   "proteins": 3.4,
+   "fats": 0.3,
+   "carbs": 5.5
+  },
+  {
+   "name": "Цвітна капуста",
+   "category": "Овочі та зелень",
+   "proteins": 2.5,
+   "fats": 0.2,
+   "carbs": 5.5
+  },
+  {
+   "name": "Пекінська капуста",
+   "category": "Овочі та зелень",
+   "proteins": 1.2,
+   "fats": 0.2,
+   "carbs": 2.2
+  },
+  {
+   "name": "Шпинат",
+   "category": "Овочі та зелень",
+   "proteins": 2.9,
+   "fats": 0.4,
+   "carbs": 1.4
+  },
+  {
+   "name": "Рукула",
+   "category": "Овочі та зелень",
+   "proteins": 2.6,
+   "fats": 0.7,
+   "carbs": 2.1
+  },
+  {
+   "name": "Баклажан",
+   "category": "Овочі та зелень",
+   "proteins": 1.2,
+   "fats": 0.1,
+   "carbs": 5.5
+  },
+  {
+   "name": "Помідори",
+   "category": "Овочі та зелень",
+   "proteins": 0.9,
+   "fats": 0.2,
+   "carbs": 3.7
+  },
+  {
+   "name": "Перець",
+   "category": "Овочі та зелень",
+   "proteins": 1.0,
+   "fats": 0.2,
+   "carbs": 4.6
+  },
+  {
+   "name": "Кабачок",
+   "category": "Овочі та зелень",
+   "proteins": 0.6,
+   "fats": 0.3,
+   "carbs": 4.6
+  },
+  {
+   "name": "Огірок",
+   "category": "Овочі та зелень",
+   "proteins": 0.6,
+   "fats": 0.1,
+   "carbs": 2.8
+  },
+  {
+   "name": "Цукіні",
+   "category": "Овочі та зелень",
+   "proteins": 1.2,
+   "fats": 0.2,
+   "carbs": 3.1
+  },
+  {
+   "name": "Салату Айсберг",
+   "category": "Овочі та зелень",
+   "proteins": 1.2,
+   "fats": 0.3,
+   "carbs": 1.9
+  },
+  {
+   "name": "Гарбуз",
+   "category": "Овочі та зелень",
+   "proteins": 1.3,
+   "fats": 0.3,
+   "carbs": 7.7
+  },
+  {
+   "name": "Часник",
+   "category": "Овочі та зелень",
+   "proteins": 6.4,
+   "fats": 0.5,
+   "carbs": 29.1
+  },
+  {
+   "name": "Грейпфрут",
+   "category": "Фрукти",
+   "proteins": 0.6,
+   "fats": 0.2,
+   "carbs": 6.2
+  },
+  {
+   "name": "Гранат",
+   "category": "Фрукти",
+   "proteins": 1.7,
+   "fats": 0.7,
+   "carbs": 13.7
+  },
+  {
+   "name": "Полуниця",
+   "category": "Фрукти",
+   "proteins": 0.8,
+   "fats": 0.4,
+   "carbs": 7.7
+  },
+  {
+   "name": "Малина",
+   "category": "Фрукти",
+   "proteins": 1.2,
+   "fats": 0.3,
+   "carbs": 12.0
+  },
+  {
+   "name": "Ожина",
+   "category": "Фрукти",
+   "proteins": 2.0,
+   "fats": 0.4,
+   "carbs": 4.5
+  },
+  {
+   "name": "Слива",
+   "category": "Фрукти",
+   "proteins": 0.6,
+   "fats": 0.3,
+   "carbs": 9.6
+  },
+  {
+   "name": "Яблуко",
+   "category": "Фрукти",
+   "proteins": 0.4,
+   "fats": 0.4,
+   "carbs": 9.8
+  },
+  {
+   "name": "Апельсин",
+   "category": "Фрукти",
+   "proteins": 1.0,
+   "fats": 0.2,
+   "carbs": 8.3
+  },
+  {
+   "name": "Чорниця",
+   "category": "Фрукти",
+   "proteins": 0.7,
+   "fats": 0.4,
+   "carbs": 14.5
+  },
+  {
+   "name": "Банан",
+   "category": "Фрукти",
+   "proteins": 1.1,
+   "fats": 0.3,
+   "carbs": 22.0
+  },
+  {
+   "name": "Лохина",
+   "category": "Фрукти",
+   "proteins": 0.9,
+   "fats": 0.2,
+   "carbs": 7.0
+  },
+  {
+   "name": "Груша",
+   "category": "Фрукти",
+   "proteins": 0.4,
+   "fats": 0.1,
+   "carbs": 10.3
+  },
+  {
+   "name": "Вишня",
+   "category": "Фрукти",
+   "proteins": 0.8,
+   "fats": 0.4,
+   "carbs": 11.3
+  },
+  {
+   "name": "Aвокадо",
+   "category": "Фрукти",
+   "proteins": 2.0,
+   "fats": 14.66,
+   "carbs": 8.53
+  },
+  {
+   "name": "Курага",
+   "category": "Сухофрукти",
+   "proteins": 5.0,
+   "fats": 0.5,
+   "carbs": 64.0
+  },
+  {
+   "name": "Чорнослив",
+   "category": "Сухофрукти",
+   "proteins": 2.3,
+   "fats": 0.4,
+   "carbs": 57.5
+  },
+  {
+   "name": "Родзинки",
+   "category": "Сухофрукти",
+   "proteins": 2.5,
+   "fats": 0.5,
+   "carbs": 66.0
+  },
+  {
+   "name": "фініки",
+   "category": "Сухофрукти",
+   "proteins": 2.7,
+   "fats": 1.0,
+   "carbs": 73.0
+  }
+ ],
+ "supplements": [
+  {
+   "name": "Цитрат кальцію",
+   "dose": "1000mg",
+   "how": "1 таб після сніданку 2 таб після вечері",
+   "schedule": [
+    {
+     "when": "after_breakfast",
+     "qty": 1
+    },
+    {
+     "when": "after_dinner",
+     "qty": 2
+    }
+   ]
+  },
+  {
+   "name": "Вітамін D3",
+   "dose": "5000MO",
+   "how": "1 капс після сніданку",
+   "schedule": [
+    {
+     "when": "after_breakfast",
+     "qty": 1
+    }
+   ]
+  },
+  {
+   "name": "Віт С",
+   "dose": "500mg",
+   "how": "1 капс після сніданку,",
+   "schedule": [
+    {
+     "when": "after_breakfast",
+     "qty": 1
+    }
+   ]
+  },
+  {
+   "name": "Магній Малат, гліцинат",
+   "dose": "400 mg",
+   "how": "1капс після сніданку (малат) 2 капс після вечері(гліцинат)",
+   "schedule": [
+    {
+     "when": "after_breakfast",
+     "qty": 1,
+     "note": "малат"
+    },
+    {
+     "when": "after_dinner",
+     "qty": 2,
+     "note": "гліцинат"
+    }
+   ]
+  },
+  {
+   "name": "Цинк",
+   "dose": "50mg",
+   "how": "1 таб після вечері",
+   "schedule": [
+    {
+     "when": "after_dinner",
+     "qty": 1
+    }
+   ]
+  },
+  {
+   "name": "OMEGA 3",
+   "dose": "EPA-1000 DHA-750",
+   "how": "2 капс після сніданку, 2 капс після вечері, в дні коли без риби",
+   "schedule": [
+    {
+     "when": "after_breakfast",
+     "qty": 2
+    },
+    {
+     "when": "after_dinner",
+     "qty": 2,
+     "note": "в дні без риби"
+    }
+   ]
+  },
+  {
+   "name": "Залізо",
+   "dose": "50mg",
+   "how": "Між прийомами їжі, через 5год після трені",
+   "schedule": [
+    {
+     "when": "between_meals",
+     "qty": 1,
+     "note": "через 5 год після тренування"
+    }
+   ]
+  }
+ ],
+ "days": [
+  [
+   [
+    {
+     "product": "Кус Кус",
+     "grams": 130.0
+    },
+    {
+     "product": "Куряче яйце",
+     "grams": 180.0
+    },
+    {
+     "product": "Aвокадо",
+     "grams": 50.0
+    }
+   ],
+   [
+    {
+     "product": "Концентрат Білкової Сироватки WPC",
+     "grams": 30.0
+    },
+    {
+     "product": "Банан",
+     "grams": 100.0
+    },
+    {
+     "product": "Волоські горіхи",
+     "grams": 25.0
+    }
+   ],
+   [
+    {
+     "product": "Хліб Тост злаковий",
+     "grams": 180.0
+    },
+    {
+     "product": "Тунець у власному соку (консервований)",
+     "grams": 150.0
+    },
+    {
+     "product": "Рукула",
+     "grams": 20.0
+    },
+    {
+     "product": "Aвокадо",
+     "grams": 50.0
+    }
+   ],
+   [
+    {
+     "product": "Батат",
+     "grams": 500.0
+    },
+    {
+     "product": "Яловичий Гуляш",
+     "grams": 150.0
+    },
+    {
+     "product": "Салату Айсберг",
+     "grams": 40.0
+    },
+    {
+     "product": "Рукула",
+     "grams": 40.0
+    },
+    {
+     "product": "Оливкова олія",
+     "grams": 5.0
+    }
+   ]
+  ],
+  [
+   [
+    {
+     "product": "Гречка",
+     "grams": 130.0
+    },
+    {
+     "product": "Куряче яйце",
+     "grams": 180.0
+    },
+    {
+     "product": "Aвокадо",
+     "grams": 50.0
+    }
+   ],
+   [
+    {
+     "product": "Рис Басматі",
+     "grams": 150.0
+    },
+    {
+     "product": "Дорадо",
+     "grams": 300.0
+    },
+    {
+     "product": "Салату Айсберг",
+     "grams": 60.0
+    },
+    {
+     "product": "Помідори",
+     "grams": 100.0
+    }
+   ],
+   [
+    {
+     "product": "Концентрат Білкової Сироватки WPC",
+     "grams": 30.0
+    },
+    {
+     "product": "Малина",
+     "grams": 100.0
+    }
+   ],
+   [
+    {
+     "product": "Рис Басматі",
+     "grams": 150.0
+    },
+    {
+     "product": "Куряче Філе",
+     "grams": 250.0
+    },
+    {
+     "product": "Салату Айсберг",
+     "grams": 50.0
+    },
+    {
+     "product": "Помідори",
+     "grams": 100.0
+    },
+    {
+     "product": "Оливкова олія",
+     "grams": 5.0
+    }
+   ]
+  ],
+  [
+   [
+    {
+     "product": "Хліб Тост злаковий",
+     "grams": 180.0
+    },
+    {
+     "product": "Куряче Філе",
+     "grams": 100.0
+    },
+    {
+     "product": "Вершкове масло 82%",
+     "grams": 15.0
+    }
+   ],
+   [
+    {
+     "product": "Сьомга, стейк",
+     "grams": 150.0
+    },
+    {
+     "product": "Кус Кус",
+     "grams": 130.0
+    },
+    {
+     "product": "Броколі",
+     "grams": 200.0
+    }
+   ],
+   [
+    {
+     "product": "Гречка",
+     "grams": 100.0
+    },
+    {
+     "product": "Куряче Філе",
+     "grams": 100.0
+    },
+    {
+     "product": "Огірок",
+     "grams": 100.0
+    },
+    {
+     "product": "Помідори",
+     "grams": 100.0
+    },
+    {
+     "product": "Оливкова олія",
+     "grams": 10.0
+    }
+   ],
+   [
+    {
+     "product": "Гречка",
+     "grams": 100.0
+    },
+    {
+     "product": "Куряче Філе",
+     "grams": 100.0
+    },
+    {
+     "product": "Огірок",
+     "grams": 100.0
+    },
+    {
+     "product": "Помідори",
+     "grams": 100.0
+    },
+    {
+     "product": "Оливкова олія",
+     "grams": 10.0
+    }
+   ]
+  ],
+  [
+   [
+    {
+     "product": "Creamy Rice",
+     "grams": 100.0
+    },
+    {
+     "product": "Концентрат Білкової Сироватки WPC",
+     "grams": 30.0
+    },
+    {
+     "product": "Полуниця",
+     "grams": 100.0
+    },
+    {
+     "product": "Мигдаль",
+     "grams": 50.0
+    }
+   ],
+   [
+    {
+     "product": "Рис Басматі",
+     "grams": 150.0
+    },
+    {
+     "product": "Яловичий Гуляш",
+     "grams": 250.0
+    },
+    {
+     "product": "Салату Айсберг",
+     "grams": 50.0
+    },
+    {
+     "product": "Помідори",
+     "grams": 100.0
+    },
+    {
+     "product": "Оливкова олія",
+     "grams": 15.0
+    }
+   ],
+   [],
+   [
+    {
+     "product": "Рис Басматі",
+     "grams": 150.0
+    },
+    {
+     "product": "Куряче Філе",
+     "grams": 250.0
+    },
+    {
+     "product": "Салату Айсберг",
+     "grams": 50.0
+    },
+    {
+     "product": "Помідори",
+     "grams": 100.0
+    },
+    {
+     "product": "Оливкова олія",
+     "grams": 15.0
+    }
+   ]
+  ],
+  [
+   [
+    {
+     "product": "Хліб Тост злаковий",
+     "grams": 150.0
+    },
+    {
+     "product": "Куряче яйце",
+     "grams": 180.0
+    },
+    {
+     "product": "Вершкове масло 82%",
+     "grams": 10.0
+    },
+    {
+     "product": "Гауда",
+     "grams": 15.0
+    }
+   ],
+   [
+    {
+     "product": "Рис Басматі",
+     "grams": 150.0
+    },
+    {
+     "product": "Сьомга, стейк",
+     "grams": 200.0
+    },
+    {
+     "product": "Броколі",
+     "grams": 200.0
+    }
+   ],
+   [
+    {
+     "product": "Концентрат Білкової Сироватки WPC",
+     "grams": 30.0
+    },
+    {
+     "product": "Малина",
+     "grams": 150.0
+    }
+   ],
+   [
+    {
+     "product": "Батат",
+     "grams": 500.0
+    },
+    {
+     "product": "Куряче Філе",
+     "grams": 150.0
+    },
+    {
+     "product": "Салату Айсберг",
+     "grams": 40.0
+    },
+    {
+     "product": "Рукула",
+     "grams": 40.0
+    },
+    {
+     "product": "Оливкова олія",
+     "grams": 5.0
+    }
+   ]
+  ]
+ ],
+ "profile": {
+  "sex": "male",
+  "age": 41.0,
+  "weight_kg": 97.0,
+  "height_cm": 192.0,
+  "body_fat_pct": 20.0,
+  "target_body_fat_pct": 12.0,
+  "deficit_pct": -30,
+  "steps_per_day": 0,
+  "activities": [
+   {
+    "name": "Силове Тренування (без відмовних підходів)",
+    "hours": 1.38,
+    "times_per_week": 3
+   },
+   {
+    "name": "Велотренажер помірна швидк.",
+    "hours": 1.93,
+    "times_per_week": 3
+   }
+  ],
+  "answers": {
+   "Скільки калорій ви споживаєте щоденно?": "зараз важко сказати",
+   "Якого співвідношення макроелементів (білки, жири, вуглеводи) ви дотримуєтесь?": "стараюся більше білків, менше вуглеводів",
+   "Як часто ви дозволяєте собі читміли (їжа поза планом)?": "часто",
+   "Чи використовуєте добавки чи продукти спортивного харчування? Якщо так, які саме?": "протеїн, креатин. нерегулярно",
+   "Скільки основних прийомів їжі у вас зазвичай буває протягом дня?": "3 прийоми",
+   "Чи є у вас харчові алергії, непереносимості, або медичні обмеження певних продуктів? Якщо так, вкажіть їх.": "",
+   "Які напої ви вживаєте найчастіше ?": "вода, кола зеро"
+  },
+  "basket": [
+   "Amix Exclusive Protein Bar",
+   "Aвокадо",
+   "Creamy Rice",
+   "Банан",
+   "Батат",
+   "Броколі",
+   "Вершкове масло 82%",
+   "Волоські горіхи",
+   "Гауда",
+   "Гречка",
+   "Дорадо",
+   "Йогурт грецький 2.5%",
+   "Концентрат Білкової Сироватки WPC",
+   "Курага",
+   "Куряче Стегно",
+   "Куряче Філе",
+   "Куряче яйце",
+   "Кус Кус",
+   "Лохина",
+   "Малина",
+   "Мигдаль",
+   "Огірок",
+   "Оливкова олія",
+   "Пекан",
+   "Полуниця",
+   "Помідори",
+   "Рис Басматі",
+   "Рукула",
+   "Салату Айсберг",
+   "Сьомга, стейк",
+   "Тунець в олії (консервований)",
+   "Тунець у власному соку (консервований)",
+   "Хліб Тост злаковий",
+   "Цибуля",
+   "Чорнослив",
+   "Яловичий Биток",
+   "Яловичий Гуляш"
+  ]
+ }
+}

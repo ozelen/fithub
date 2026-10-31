@@ -41,7 +41,9 @@ class Goal(models.Model):
             "notes": self.notes,
             "created_at": self.created_at.isoformat(),  # type: ignore
             "updated_at": self.updated_at.isoformat(),  # type: ignore
-            "days_remaining": ((self.target_date - date.today()).days if self.target_date else None),
+            "days_remaining": (
+                (self.target_date - date.today()).days if self.target_date else None
+            ),
         }
 
     @property
@@ -64,6 +66,8 @@ class BodyMeasurement(models.Model):
         ("body_fat_percentage", "Body Fat (%)"),
         ("muscle_mass_percentage", "Muscle Mass (%)"),
         ("bmi_value", "BMI Value"),
+        ("chest_cm", "Chest (cm)"),
+        ("shoulders_cm", "Shoulders (cm)"),
     ]
     MEASUREMENT_TYPES = [
         ("target", "Target"),

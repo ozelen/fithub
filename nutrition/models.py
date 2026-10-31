@@ -2,7 +2,9 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
-# from goals.models import Goal
+
+def today():
+    return timezone.now().date()
 
 
 class Diet(models.Model):
@@ -14,7 +16,7 @@ class Diet(models.Model):
     day_carbohydrates_g = models.FloatField()
     day_calories_kcal = models.FloatField()
     is_active = models.BooleanField(default=False)
-    start_date = models.DateField(default=lambda: timezone.now().date())
+    start_date = models.DateField(default=today)
     end_date = models.DateField(null=True, blank=True)
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -26,7 +28,9 @@ class Diet(models.Model):
     def save(self, *args, **kwargs):
         # Ensure only one diet is active per user
         if self.is_active:
-            Diet.objects.filter(user=self.user, is_active=True).exclude(id=self.id).update(is_active=False)
+            Diet.objects.filter(user=self.user, is_active=True).exclude(
+                id=self.id
+            ).update(is_active=False)
         super().save(*args, **kwargs)
 
 
@@ -34,11 +38,19 @@ class Meal(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     diet = models.ForeignKey(Diet, on_delete=models.CASCADE)
+    plan_day = models.PositiveSmallIntegerField(
+        null=True, blank=True, help_text="Day template number within the diet rotation"
+    )
+    order = models.PositiveSmallIntegerField(
+        null=True, blank=True, help_text="Meal number within the day"
+    )
 
     # Calendar scheduling
     is_scheduled = models.BooleanField(default=False)
     start_date = models.DateField(null=True, blank=True)
-    end_date = models.DateField(null=True, blank=True, help_text="End date for recurrent meals")
+    end_date = models.DateField(
+        null=True, blank=True, help_text="End date for recurrent meals"
+    )
     start_time = models.TimeField(null=True, blank=True)
     duration_minutes = models.IntegerField(default=30)
 
@@ -51,7 +63,9 @@ class Meal(models.Model):
         ("weekend", "Weekends (Sat-Sun)"),
         ("custom", "Custom"),
     ]
-    recurrence_type = models.CharField(max_length=10, choices=RECURRENCE_TYPES, default="none")
+    recurrence_type = models.CharField(
+        max_length=10, choices=RECURRENCE_TYPES, default="none"
+    )
     recurrence_until = models.DateField(null=True, blank=True)
 
     # Google Calendar integration
@@ -100,14 +114,16 @@ class Meal(models.Model):
 
         return None
 
+    def macros(self):
+        """Totals over ingredients; quantities are grams, nutrients per 100 g."""
+        t = {"calories": 0.0, "proteins": 0.0, "fats": 0.0, "carbs": 0.0}
+        for mi in self.mealingredient_set.select_related("ingredient"):
+            for k in t:
+                t[k] += getattr(mi.ingredient, k) * mi.quantity / 100
+        return {k: round(v, 1) for k, v in t.items()}
+
     def get_total_calories(self):
-        """Calculate total calories for this meal"""
-        total = 0
-        for meal_ingredient in self.mealingredient_set.all():
-            # Calculate based on quantity (assuming nutritional values are per 100g)
-            ratio = meal_ingredient.quantity / 100
-            total += meal_ingredient.ingredient.calories * ratio
-        return total
+        return self.macros()["calories"]
 
 
 class Category(models.Model):
@@ -122,16 +138,22 @@ class Category(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=255)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, null=True, blank=True
+    )
     proteins = models.FloatField()
     fats = models.FloatField()
     carbs = models.FloatField()
     calories = models.FloatField()
-    fibers = models.FloatField()
-    sugars = models.FloatField()
+    fibers = models.FloatField(null=True, blank=True)
+    sugars = models.FloatField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    is_personal = models.BooleanField(default=False, help_text="Personal ingredient created by user")
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    is_personal = models.BooleanField(
+        default=False, help_text="Personal ingredient created by user"
+    )
+    created_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, blank=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

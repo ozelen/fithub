@@ -110,6 +110,21 @@ fithub/
 
 MIT License - see LICENSE file for details.
 
+## Diet plan (the "Раціон" sheet)
+
+`plan` holds the profile, activities (MET + protein/fat g/kg), supplements and the calculator that reproduces the spreadsheet
+(Katch–McArdle or Mifflin BMR, TDEE = 1.1·BMR + Σ MET·kg·h·times/7 + steps, signed `deficit_pct`, macros from LBM).
+
+- `GET/PUT /api/plan/profile/`, `/api/plan/activities/`, `/api/plan/activity-types/`, `/api/plan/supplements/`, `/api/plan/supplement-intakes/`
+- `GET /api/plan/calculator/` — targets from the profile and the latest `weight_kg` / `body_fat_percentage` measurements (`?weight=&bf=` override)
+- `GET /api/plan/today/` — today's template meals (rotating by day since the diet start), eaten totals, supplements with intake state, activities
+
+Seed everything from the sheet export in `plan/fixtures/ration.json` (re-runnable; creates the active diet "Раціон" with 5 day templates):
+
+```bash
+uv run manage.py import_ration --user <username>
+```
+
 ## Open Food Facts data (`facts` app)
 
 `facts_product` holds the global OFF catalogue trimmed to barcode, names, stores, countries, categories and
