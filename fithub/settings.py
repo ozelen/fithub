@@ -187,6 +187,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # REST Framework Configuration
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        "authentication.app_token.AppTokenAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
@@ -255,4 +256,9 @@ SIMPLE_JWT = {
 }
 
 # Open Food Facts asks reusers to identify themselves; their static host rate-limits anonymous clients.
+# app.zelen.uk mints user tokens; empty public key disables that path.
+APP_ISSUER = os.environ.get("APP_ISSUER", "https://app.zelen.uk")
+APP_AUDIENCE = os.environ.get("APP_AUDIENCE", "fit")
+APP_JWT_PUBLIC_KEY = os.environ.get("APP_JWT_PUBLIC_KEY", "").replace("\\n", "\n")
+
 OFF_USER_AGENT = os.environ.get("OFF_USER_AGENT", "fit.zelen.uk/0.1 (o@zelen.uk)")
