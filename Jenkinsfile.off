@@ -1,5 +1,6 @@
 // Job `fithub-off-import`: Pipeline from SCM, script path `Jenkinsfile.off`, Build periodically `H 7 * * *`
-// (OFF publishes the daily delta around 06:20 UTC). Tick FULL for the monthly Parquet reload (`H 5 1 * *`).
+// (OFF publishes the daily delta around 06:20 UTC). The nightly run reloads the Parquet snapshot by itself
+// every 30 days; tick FULL only to force one now.
 pipeline {
   agent any
   parameters {

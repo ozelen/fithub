@@ -1,8 +1,9 @@
 """Load Open Food Facts into facts_product.
 
 Default: apply the daily JSONL deltas not yet recorded in ImportRun (OFF keeps 14 days; they carry
-full product documents, schema 1004, nutrition under `nutrition.aggregated_set`).
---full: replace the table from the nightly Parquet export (catches deletions; run monthly).
+full product documents, schema 1004, nutrition under `nutrition.aggregated_set`). When the last Parquet
+snapshot is older than FULL_EVERY_DAYS (or there is none), the default run reloads it first.
+--full: replace the table from the nightly Parquet export now (catches deletions).
 --taxonomy: (re)load facts_category from the OFF categories taxonomy.
 """
 
@@ -14,16 +15,18 @@ import re
 import tempfile
 import unicodedata
 import urllib.request
-from datetime import date
+from datetime import date, timedelta
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import connection, transaction
+from django.utils import timezone
 
 from facts.models import NUTRIENTS, Category, ImportRun, Product
 
 DELTA_BASE = "https://static.openfoodfacts.org/data/delta/"
 PARQUET = "hf://datasets/openfoodfacts/product-database/food.parquet"
+FULL_EVERY_DAYS = 30
 TAXONOMY = "https://raw.githubusercontent.com/openfoodfacts/openfoodfacts-server/main/taxonomies/food/categories.txt"
 OFF_NAME = {"energy_kcal": "energy-kcal", "saturated_fat": "saturated-fat"}
 COLUMNS = (
@@ -161,11 +164,17 @@ class Command(BaseCommand):
             with gzip.open(opts["file"], "rt", encoding="utf-8") as fh:
                 self.apply_delta(opts["file"].rsplit("/", 1)[-1], fh)
         elif not opts["taxonomy"]:
+            if self.full_due():
+                self.load_parquet(0)
             self.apply_pending_deltas()
         if not opts["no_refresh"]:
             with connection.cursor() as cur:
                 cur.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY facts_category_nutrition")
             self.stdout.write("refreshed facts_category_nutrition")
+
+    def full_due(self):
+        last = ImportRun.objects.filter(kind="full").order_by("-created_at").first()
+        return last is None or timezone.now() - last.created_at > timedelta(days=FULL_EVERY_DAYS)
 
     def apply_pending_deltas(self):
         with fetch(DELTA_BASE + "index.txt") as resp:
@@ -226,6 +235,8 @@ class Command(BaseCommand):
             cur.execute("TRUNCATE facts_product")
             cur.copy_expert(f"COPY facts_product ({COLS}) FROM STDIN WITH (FORMAT csv, NULL '\\N')", fh)
             n = Product.objects.count()
+            # The snapshot can be older than the last deltas: forget them so the next run re-applies what OFF still serves.
+            ImportRun.objects.filter(kind__in=("delta", "full")).delete()
             ImportRun.objects.create(name=f"food.parquet {date.today().isoformat()}", kind="full", rows=n)
         self.stdout.write(f"loaded {n} products from the Parquet export")
 

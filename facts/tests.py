@@ -1,4 +1,10 @@
-from facts.management.commands.import_openfoodfacts import parse_product, parse_taxonomy, pg_array
+from datetime import timedelta
+
+import pytest
+from django.utils import timezone
+
+from facts.management.commands.import_openfoodfacts import Command, parse_product, parse_taxonomy, pg_array
+from facts.models import ImportRun
 
 
 def test_parse_product_reads_aggregated_set():
@@ -52,3 +58,13 @@ en: Rices
 
 def test_pg_array_quotes_every_element():
     assert pg_array(["en:spain", 'odd "name", here']) == '{"en:spain","odd \\"name\\", here"}'
+
+
+
+@pytest.mark.django_db
+def test_full_reload_is_due_when_missing_or_older_than_a_month():
+    assert Command().full_due()
+    run = ImportRun.objects.create(name="food.parquet today", kind="full")
+    assert not Command().full_due()
+    ImportRun.objects.filter(pk=run.pk).update(created_at=timezone.now() - timedelta(days=31))
+    assert Command().full_due()
