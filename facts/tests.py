@@ -1,9 +1,10 @@
+import io
 from datetime import timedelta
 
 import pytest
 from django.utils import timezone
 
-from facts.management.commands.import_openfoodfacts import Command, parse_product, parse_taxonomy, pg_array
+from facts.management.commands.import_openfoodfacts import Command, NoNul, parse_product, parse_taxonomy, pg_array
 from facts.models import ImportRun
 
 
@@ -68,3 +69,8 @@ def test_full_reload_is_due_when_missing_or_older_than_a_month():
     assert not Command().full_due()
     ImportRun.objects.filter(pk=run.pk).update(created_at=timezone.now() - timedelta(days=31))
     assert Command().full_due()
+
+
+def test_nul_bytes_are_dropped_without_ending_the_stream_early():
+    stream = NoNul(io.StringIO("ab\x00c" + "\x00" * 4 + "de"))
+    assert "".join(iter(lambda: stream.read(2), "")) == "abcde"

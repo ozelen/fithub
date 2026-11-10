@@ -9,11 +9,16 @@ snapshot is older than FULL_EVERY_DAYS (or there is none), the default run reloa
 
 import csv
 import gzip
+import http.client
 import io
 import json
+import os
 import re
+import shutil
 import tempfile
+import time
 import unicodedata
+import urllib.error
 import urllib.request
 from datetime import date, timedelta
 
@@ -25,7 +30,7 @@ from django.utils import timezone
 from facts.models import NUTRIENTS, Category, ImportRun, Product
 
 DELTA_BASE = "https://static.openfoodfacts.org/data/delta/"
-PARQUET = "hf://datasets/openfoodfacts/product-database/food.parquet"
+PARQUET = "https://huggingface.co/datasets/openfoodfacts/product-database/resolve/main/food.parquet"
 FULL_EVERY_DAYS = 30
 TAXONOMY = "https://raw.githubusercontent.com/openfoodfacts/openfoodfacts-server/main/taxonomies/food/categories.txt"
 OFF_NAME = {"energy_kcal": "energy-kcal", "saturated_fat": "saturated-fat"}
@@ -100,18 +105,56 @@ def _cell(v):
     return v
 
 
+class NoNul:
+    """Postgres text cannot hold NUL, and a few OFF products contain one."""
+
+    def __init__(self, fh):
+        self.fh = fh
+
+    def read(self, size=-1):
+        while chunk := self.fh.read(size):
+            if clean := chunk.replace("\x00", ""):
+                return clean
+        return ""
+
+
+def copy_csv(cur, table, fh):
+    cur.copy_expert(f"COPY {table} ({COLS}) FROM STDIN WITH (FORMAT csv, NULL '\\N')", NoNul(fh))
+
+
 def copy_rows(cur, table, rows):
     buf = io.StringIO()
     writer = csv.writer(buf)
     for row in rows:
         writer.writerow([_cell(row[c]) for c in COLUMNS])
     buf.seek(0)
-    cur.copy_expert(f"COPY {table} ({COLS}) FROM STDIN WITH (FORMAT csv, NULL '\\N')", buf)
+    copy_csv(cur, table, buf)
 
 
 def fetch(url):
     req = urllib.request.Request(url, headers={"User-Agent": settings.OFF_USER_AGENT})
     return urllib.request.urlopen(req, timeout=600)
+
+
+def download(url, path, attempts=6, wait=60):
+    """One sequential GET, resumed after drops. Reading the 8 GB Parquet remotely means thousands of range
+    requests, and Hugging Face answers 429 beyond 3000 per 5 minutes."""
+    for attempt in range(1, attempts + 1):
+        have = os.path.getsize(path) if os.path.exists(path) else 0
+        req = urllib.request.Request(url, headers={"User-Agent": settings.OFF_USER_AGENT, "Range": f"bytes={have}-"})
+        try:
+            with urllib.request.urlopen(req, timeout=600) as resp, open(path, "ab" if resp.status == 206 else "wb") as out:
+                shutil.copyfileobj(resp, out, 1 << 20)
+            return
+        except urllib.error.HTTPError as exc:
+            if exc.code == 416 and have:  # nothing left to fetch
+                return
+            error = exc
+        except (OSError, http.client.HTTPException) as exc:
+            error = exc
+        if attempt < attempts:
+            time.sleep(wait * attempt)
+    raise error
 
 
 def slug(name):
@@ -164,9 +207,16 @@ class Command(BaseCommand):
             with gzip.open(opts["file"], "rt", encoding="utf-8") as fh:
                 self.apply_delta(opts["file"].rsplit("/", 1)[-1], fh)
         elif not opts["taxonomy"]:
+            snapshot_error = None
             if self.full_due():
-                self.load_parquet(0)
+                try:
+                    self.load_parquet(0)
+                except Exception as exc:  # deltas must not wait for a snapshot that fails to download
+                    snapshot_error = exc
+                    self.stderr.write(f"snapshot reload failed: {exc}")
             self.apply_pending_deltas()
+            if snapshot_error:
+                raise snapshot_error
         if not opts["no_refresh"]:
             with connection.cursor() as cur:
                 cur.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY facts_category_nutrition")
@@ -209,36 +259,44 @@ class Command(BaseCommand):
         def nutrient(col):
             return f"""list_extract(list_filter(nutriments, x -> x.name = '{OFF_NAME.get(col, col)}'), 1)."100g" AS {col}"""
 
-        con = duckdb.connect()
-        con.execute("INSTALL httpfs; LOAD httpfs; SET memory_limit = '1GB'; SET threads = 2")
-        with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as tmp:
-            path = tmp.name
-        con.execute(
-            f"""COPY (
-              SELECT code,
-                coalesce(list_extract(list_filter(product_name, x -> x.lang = 'main'), 1).text,
-                         list_extract(product_name, 1).text, '')[1:512] AS name,
-                coalesce(brands, '')[1:512] AS brands, coalesce(quantity, '')[1:128] AS quantity,
-                coalesce(serving_size, '')[1:128] AS serving_size, try_cast(serving_quantity AS DOUBLE) AS serving_quantity,
-                {pg_list('stores_tags')} AS stores_tags, {pg_list('countries_tags')} AS countries_tags,
-                {pg_list('categories_tags')} AS categories_tags,
-                coalesce(nutriscore_grade, '')[1:16] AS nutriscore_grade, coalesce(completeness, 0) AS completeness,
-                coalesce(obsolete, false) AS obsolete, coalesce(last_modified_t, 0) AS last_modified_t,
-                '100g' AS per,
-                {', '.join(nutrient(c) for c in NUTRIENTS)}
-              FROM read_parquet('{PARQUET}')
-              WHERE code IS NOT NULL AND code <> ''
-              {f'LIMIT {int(limit)}' if limit else ''}
-            ) TO '{path}' (FORMAT csv, HEADER false, NULLSTR '\\N')"""
-        )
-        with transaction.atomic(), connection.cursor() as cur, open(path, encoding="utf-8") as fh:
-            cur.execute("TRUNCATE facts_product")
-            cur.copy_expert(f"COPY facts_product ({COLS}) FROM STDIN WITH (FORMAT csv, NULL '\\N')", fh)
-            n = Product.objects.count()
-            # The snapshot can be older than the last deltas: forget them so the next run re-applies what OFF still serves.
-            ImportRun.objects.filter(kind__in=("delta", "full")).delete()
-            ImportRun.objects.create(name=f"food.parquet {date.today().isoformat()}", kind="full", rows=n)
-        self.stdout.write(f"loaded {n} products from the Parquet export")
+        with tempfile.TemporaryDirectory() as tmp:
+            parquet, path = f"{tmp}/food.parquet", f"{tmp}/food.csv"
+            download(PARQUET, parquet)
+            self.stdout.write(f"downloaded {os.path.getsize(parquet) >> 20} MB")
+            con = duckdb.connect()
+            con.execute("SET memory_limit = '1GB'; SET threads = 2")
+            con.execute(
+                f"""COPY (
+                  SELECT code[1:64] AS code,
+                    coalesce(list_extract(list_filter(product_name, x -> x.lang = 'main'), 1).text,
+                             list_extract(product_name, 1).text, '')[1:512] AS name,
+                    coalesce(brands, '')[1:512] AS brands, coalesce(quantity, '')[1:128] AS quantity,
+                    coalesce(serving_size, '')[1:128] AS serving_size, try_cast(serving_quantity AS DOUBLE) AS serving_quantity,
+                    {pg_list('stores_tags')} AS stores_tags, {pg_list('countries_tags')} AS countries_tags,
+                    {pg_list('categories_tags')} AS categories_tags,
+                    coalesce(nutriscore_grade, '')[1:16] AS nutriscore_grade, coalesce(completeness, 0) AS completeness,
+                    coalesce(obsolete, false) AS obsolete, coalesce(last_modified_t, 0) AS last_modified_t,
+                    '100g' AS per,
+                    {', '.join(nutrient(c) for c in NUTRIENTS)}
+                  FROM read_parquet('{parquet}')
+                  WHERE code IS NOT NULL AND code <> ''
+                  {f'LIMIT {int(limit)}' if limit else ''}
+                ) TO '{path}' (FORMAT csv, HEADER false, NULLSTR '\\N')"""
+            )
+            with transaction.atomic(), connection.cursor() as cur, open(path, encoding="utf-8") as fh:
+                cur.execute("CREATE TEMP TABLE facts_product_tmp (LIKE facts_product) ON COMMIT DROP")
+                copy_csv(cur, "facts_product_tmp", fh)
+                cur.execute("TRUNCATE facts_product")
+                # the export repeats some barcodes; keep the most recently modified row
+                cur.execute(
+                    f"INSERT INTO facts_product ({COLS}) SELECT DISTINCT ON (code) {COLS} "
+                    "FROM facts_product_tmp ORDER BY code, last_modified_t DESC"
+                )
+                n = Product.objects.count()
+                # The snapshot can be older than the last deltas: forget them so the next run re-applies what OFF still serves.
+                ImportRun.objects.filter(kind__in=("delta", "full")).delete()
+                ImportRun.objects.create(name=f"food.parquet {date.today().isoformat()}", kind="full", rows=n)
+            self.stdout.write(f"loaded {n} products from the Parquet export")
 
     def load_taxonomy(self):
         with fetch(TAXONOMY) as resp:
