@@ -23,6 +23,7 @@ from .serializers import (
 def latest_measurement(user, metric):
     m = (
         BodyMeasurement.objects.filter(user=user, metric=metric)
+        .exclude(measurement_type="target")
         .order_by("-timestamp")
         .first()
     )
@@ -147,18 +148,32 @@ class TodayView(APIView):
         for i in intakes:
             taken[i.supplement_id] = taken.get(i.supplement_id, 0) + i.qty
         profile = Profile.objects.filter(user=user).first()
+        # Targets follow the user's own profile and latest weight; the diet's stored numbers are the fallback.
+        calc = run_calculator(profile)[0] if profile else None
+        targets = (
+            {
+                "calories": calc["calories_in_kcal"],
+                "proteins": calc["protein_g"],
+                "fats": calc["fat_g"],
+                "carbs": calc["carbs_g"],
+                "warning": calc["warning"],
+            }
+            if calc
+            else diet
+            and {
+                "calories": diet.day_calories_kcal,
+                "proteins": diet.day_proteins_g,
+                "fats": diet.day_fats_g,
+                "carbs": diet.day_carbohydrates_g,
+                "warning": None,
+            }
+        )
         return Response(
             {
                 "date": today,
                 "diet": diet
                 and {"id": diet.id, "name": diet.name, "plan_day": plan_day},
-                "targets": diet
-                and {
-                    "calories": diet.day_calories_kcal,
-                    "proteins": diet.day_proteins_g,
-                    "fats": diet.day_fats_g,
-                    "carbs": diet.day_carbohydrates_g,
-                },
+                "targets": targets,
                 "meals": [
                     {
                         "id": m.id,

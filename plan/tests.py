@@ -57,6 +57,18 @@ def test_import_ration_and_today():
     assert len(today["supplements"]) == 7
     calc = client.get("/api/plan/calculator/").json()
     assert calc["tdee_kcal"] < 3100  # 3x/week, not daily
+    assert today["targets"]["calories"] == calc["calories_in_kcal"]
+
+    # targets are per user: a new measurement moves them without touching the diet
+    for kind, value in (("log", 90), ("target", 80)):  # a target is not a current weight
+        body = {"metric": "weight_kg", "measurement_type": kind, "value": value, "timestamp": "2100-01-01T00:00:00Z"}
+        assert client.post("/api/goals/measurements/", body).status_code == 201
+    lighter = client.get("/api/plan/today/").json()["targets"]
+    assert lighter["calories"] < today["targets"]["calories"]
+    assert client.get("/api/plan/calculator/").json()["inputs"]["weight_kg"] == 90
+    newcomer = APIClient()
+    newcomer.force_authenticate(User.objects.create_user("friend"))
+    assert newcomer.get("/api/plan/today/").json()["targets"] is None
 
 
 @pytest.mark.django_db
