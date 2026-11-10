@@ -234,11 +234,3 @@ class SupplementIntakeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return SupplementIntake.objects.filter(supplement__user=self.request.user)
-
-    def perform_create(self, serializer):
-        get_object_or_404(
-            Supplement,
-            pk=serializer.validated_data["supplement"].pk,
-            user=self.request.user,
-        )
-        serializer.save()

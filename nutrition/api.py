@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Category, Diet, Ingredient, Meal, MealIngredient, MealPreference, MealRecord
@@ -16,6 +16,7 @@ from .serializers import (
     MealPreferenceSerializer,
     MealRecordSerializer,
     MealSerializer,
+    visible_ingredients,
 )
 
 
@@ -92,7 +93,7 @@ class MealViewSet(viewsets.ModelViewSet):
         meal = self.get_object()
         data = request.data.copy()
         data["meal"] = meal.id
-        serializer = MealIngredientSerializer(data=data)
+        serializer = MealIngredientSerializer(data=data, context=self.get_serializer_context())
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -135,8 +136,10 @@ class IngredientViewSet(viewsets.ModelViewSet):
     ordering = ["name"]
 
     def get_queryset(self):
-        # Show both public ingredients and user's personal ingredients
-        return Ingredient.objects.filter(Q(is_personal=False) | Q(created_by=self.request.user))
+        # Read the global catalog and your own; write only your own. The catalog is edited in the admin.
+        if self.request.method in SAFE_METHODS:
+            return visible_ingredients(self.request.user)
+        return Ingredient.objects.filter(created_by=self.request.user, is_personal=True)
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user, is_personal=True)
@@ -151,7 +154,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        ingredients = Ingredient.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))[:10]
+        ingredients = self.get_queryset().filter(Q(name__icontains=query) | Q(description__icontains=query))[:10]
         serializer = IngredientSearchSerializer(ingredients, many=True)
         return Response(serializer.data)
 
@@ -164,7 +167,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema(tags=["Nutrition"])
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated]

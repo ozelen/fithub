@@ -1,9 +1,35 @@
 from django.contrib.auth.models import User
+from django.db.models import Q
 from rest_framework import serializers
 
 from goals.models import Goal
 
 from .models import Category, Diet, Ingredient, Meal, MealIngredient, MealPreference, MealRecord
+
+
+def visible_ingredients(user):
+    """The global catalog plus the user's own ingredients."""
+    return Ingredient.objects.filter(Q(is_personal=False) | Q(created_by=user))
+
+
+class OwnedRefsMixin:
+    """Ids a client sends must point at rows the caller may use."""
+
+    def _check(self, queryset, value):
+        if value is not None and not queryset.filter(pk=getattr(value, "pk", value)).exists():
+            raise serializers.ValidationError("Not found.")
+        return value
+
+    def validate_diet_id(self, value):
+        return self._check(Diet.objects.filter(user=self.context["request"].user), value)
+
+    def validate_meal_id(self, value):
+        return self._check(Meal.objects.filter(diet__user=self.context["request"].user), value)
+
+    validate_meal = validate_meal_id
+
+    def validate_ingredient_id(self, value):
+        return self._check(visible_ingredients(self.context["request"].user), value)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -75,7 +101,7 @@ class DietSerializer(serializers.ModelSerializer):
         ]
 
 
-class MealIngredientSerializer(serializers.ModelSerializer):
+class MealIngredientSerializer(OwnedRefsMixin, serializers.ModelSerializer):
     ingredient = IngredientSerializer(read_only=True)
     ingredient_id = serializers.IntegerField(write_only=True)
 
@@ -100,7 +126,7 @@ class MealIngredientSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-class MealSerializer(serializers.ModelSerializer):
+class MealSerializer(OwnedRefsMixin, serializers.ModelSerializer):
     diet = DietSerializer(read_only=True)
     diet_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     ingredients = MealIngredientSerializer(many=True, read_only=True)
@@ -140,7 +166,7 @@ class MealEditSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "description", "diet_id", "created_at", "updated_at"]
 
 
-class MealRecordSerializer(serializers.ModelSerializer):
+class MealRecordSerializer(OwnedRefsMixin, serializers.ModelSerializer):
     meal = MealSerializer(read_only=True)
     meal_id = serializers.IntegerField(write_only=True)
     user = UserSerializer(read_only=True)
@@ -160,7 +186,7 @@ class MealRecordSerializer(serializers.ModelSerializer):
         ]
 
 
-class MealPreferenceSerializer(serializers.ModelSerializer):
+class MealPreferenceSerializer(OwnedRefsMixin, serializers.ModelSerializer):
     ingredient = IngredientSerializer(read_only=True)
     ingredient_id = serializers.IntegerField(write_only=True)
     user = UserSerializer(read_only=True)

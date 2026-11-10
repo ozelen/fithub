@@ -54,3 +54,8 @@ class SupplementIntakeSerializer(serializers.ModelSerializer):
     class Meta:
         model = SupplementIntake
         fields = ["id", "supplement", "taken_at", "qty"]
+
+    def validate_supplement(self, supplement):
+        if supplement.user_id != self.context["request"].user.id:
+            raise serializers.ValidationError("Not found.")
+        return supplement

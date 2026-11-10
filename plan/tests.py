@@ -57,3 +57,18 @@ def test_import_ration_and_today():
     assert len(today["supplements"]) == 7
     calc = client.get("/api/plan/calculator/").json()
     assert calc["tdee_kcal"] < 3100  # 3x/week, not daily
+
+
+@pytest.mark.django_db
+def test_supplement_intake_needs_own_supplement():
+    me, other = User.objects.create_user("me"), User.objects.create_user("other")
+    mine = Supplement.objects.create(user=me, name="D3")
+    theirs = Supplement.objects.create(user=other, name="D3")
+    client = APIClient()
+    client.force_authenticate(me)
+    body = {"taken_at": "2026-11-10T08:00:00Z", "qty": 1}
+    url = "/api/plan/supplement-intakes/"
+    assert client.post(url, {**body, "supplement": theirs.id}).status_code == 400
+    created = client.post(url, {**body, "supplement": mine.id})
+    assert created.status_code == 201
+    assert client.patch(f"{url}{created.data['id']}/", {"supplement": theirs.id}).status_code == 400

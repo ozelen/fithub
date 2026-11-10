@@ -11,7 +11,7 @@ from .factories import (
     MealRecordFactory,
     UserFactory,
 )
-from .models import Diet, MealIngredient, MealPreference, MealRecord
+from .models import Category, Diet, Ingredient, MealIngredient, MealPreference, MealRecord
 
 
 class NutritionAPITestCase(APITestCase):
@@ -292,3 +292,46 @@ class NutritionAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["results"][0]["name"], "A Diet")
         self.assertEqual(response.data["results"][1]["name"], "Z Diet")
+
+
+    def test_global_catalog_is_read_only(self):
+        shared = IngredientFactory(name="Shared rice")
+        mine = IngredientFactory(created_by=self.user, is_personal=True)
+        theirs = IngredientFactory(name="Secret rice", created_by=self.other_user, is_personal=True)
+
+        for target in (shared, theirs):
+            url = reverse("ingredient-detail", kwargs={"pk": target.id})
+            self.assertEqual(self.client.patch(url, {"name": "hacked"}).status_code, status.HTTP_404_NOT_FOUND)
+            self.assertEqual(self.client.delete(url).status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(self.client.get(reverse("ingredient-detail", kwargs={"pk": shared.id})).status_code, 200)
+        self.assertEqual(self.client.patch(reverse("ingredient-detail", kwargs={"pk": mine.id}), {"name": "Mine"}).status_code, 200)
+
+        category_url = reverse("category-detail", kwargs={"pk": shared.category_id})
+        self.assertEqual(self.client.delete(category_url).status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(self.client.post(reverse("category-list"), {"name": "x"}).status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertTrue(Category.objects.filter(id=shared.category_id).exists())
+        self.assertEqual(Ingredient.objects.get(id=shared.id).name, "Shared rice")
+
+        names = [i["name"] for i in self.client.get(reverse("ingredient-search"), {"q": "rice"}).data]
+        self.assertEqual(names, ["Shared rice"])
+
+    def test_foreign_ids_are_rejected(self):
+        their_meal = MealFactory(diet=DietFactory(user=self.other_user))
+        their_ingredient = IngredientFactory(created_by=self.other_user, is_personal=True)
+        my_meal = MealFactory(diet=DietFactory(user=self.user))
+        shared = IngredientFactory()
+        bad = status.HTTP_400_BAD_REQUEST
+
+        self.assertEqual(self.client.post(reverse("meal-list"), {"name": "x", "diet_id": their_meal.diet_id}).status_code, bad)
+        self.assertEqual(self.client.post(reverse("mealrecord-list"), {"meal_id": their_meal.id}).status_code, bad)
+        line = {"ingredient_id": shared.id, "quantity": 1, "unit": "g"}
+        self.assertEqual(self.client.post(reverse("mealingredient-list"), {**line, "meal": their_meal.id}).status_code, bad)
+        self.assertEqual(
+            self.client.post(reverse("meal-add-ingredient", kwargs={"pk": my_meal.id}), {**line, "ingredient_id": their_ingredient.id}).status_code, bad
+        )
+        self.assertEqual(
+            self.client.post(reverse("mealpreference-list"), {"ingredient_id": their_ingredient.id, "preference_type": "like"}).status_code, bad
+        )
+        self.assertEqual(self.client.post(reverse("mealingredient-list"), {**line, "meal": my_meal.id}).status_code, status.HTTP_201_CREATED)
+        self.assertEqual(MealIngredient.objects.count(), 1)
+        self.assertEqual(MealRecord.objects.count(), 0)
