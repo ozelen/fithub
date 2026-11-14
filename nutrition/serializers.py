@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.utils import timezone
 from rest_framework import serializers
 
 from goals.models import Goal
@@ -68,6 +69,7 @@ class IngredientSerializer(serializers.ModelSerializer):
             "fibers",
             "sugars",
             "description",
+            "barcode",
             "created_at",
             "updated_at",
         ]
@@ -166,10 +168,19 @@ class MealEditSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "description", "diet_id", "created_at", "updated_at"]
 
 
+class MealRecordItemSerializer(serializers.Serializer):
+    ingredient_id = serializers.IntegerField()
+    grams = serializers.FloatField(min_value=0.1)
+
+
 class MealRecordSerializer(OwnedRefsMixin, serializers.ModelSerializer):
+    """Either a planned meal (`meal_id`) or a meal composed here (`meal_name` + `items` in grams)."""
+
     meal = MealSerializer(read_only=True)
-    meal_id = serializers.IntegerField(write_only=True)
+    meal_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     user = UserSerializer(read_only=True)
+    timestamp = serializers.DateTimeField(required=False)
+    items = serializers.JSONField(required=False)
 
     class Meta:
         model = MealRecord
@@ -177,6 +188,13 @@ class MealRecordSerializer(OwnedRefsMixin, serializers.ModelSerializer):
             "id",
             "meal",
             "meal_id",
+            "meal_name",
+            "items",
+            "quantity_grams",
+            "calories",
+            "proteins",
+            "carbs",
+            "fats",
             "timestamp",
             "photo",
             "user",
@@ -184,6 +202,41 @@ class MealRecordSerializer(OwnedRefsMixin, serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+        read_only_fields = ["quantity_grams", "calories", "proteins", "carbs", "fats"]
+
+    def validate_items(self, value):
+        rows = MealRecordItemSerializer(data=value, many=True)
+        rows.is_valid(raise_exception=True)
+        found = visible_ingredients(self.context["request"].user).in_bulk([r["ingredient_id"] for r in rows.validated_data])
+        items = []
+        for r in rows.validated_data:
+            ing = found.get(r["ingredient_id"])
+            if ing is None:
+                raise serializers.ValidationError(f"Ingredient {r['ingredient_id']} not found.")
+            k = r["grams"] / 100
+            items.append(
+                {
+                    "ingredient_id": ing.id,
+                    "name": ing.name,
+                    "grams": r["grams"],
+                    **{f: round(getattr(ing, f) * k, 1) for f in ("calories", "proteins", "fats", "carbs")},
+                }
+            )
+        return items
+
+    def validate(self, attrs):
+        if self.instance is None and not attrs.get("meal_id") and not attrs.get("items"):
+            raise serializers.ValidationError("Send meal_id or items.")
+        if "items" in attrs:
+            items = attrs["items"]
+            attrs["quantity_grams"] = round(sum(i["grams"] for i in items), 1)
+            for f in ("calories", "proteins", "fats", "carbs"):
+                attrs[f] = round(sum(i[f] for i in items), 1)
+        return attrs
+
+    def create(self, validated_data):
+        validated_data.setdefault("timestamp", timezone.now())
+        return super().create(validated_data)
 
 
 class MealPreferenceSerializer(OwnedRefsMixin, serializers.ModelSerializer):

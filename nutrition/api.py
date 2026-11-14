@@ -6,6 +6,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 
+from facts.models import Product
+
 from .models import Category, Diet, Ingredient, Meal, MealIngredient, MealPreference, MealRecord
 from .serializers import (
     CategorySerializer,
@@ -130,7 +132,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
         filters.SearchFilter,
         filters.OrderingFilter,
     ]
-    filterset_fields = ["category", "is_personal"]
+    filterset_fields = ["category", "is_personal", "barcode"]
     search_fields = ["name", "description"]
     ordering_fields = ["name", "calories", "proteins", "created_at"]
     ordering = ["name"]
@@ -157,6 +159,40 @@ class IngredientViewSet(viewsets.ModelViewSet):
         ingredients = self.get_queryset().filter(Q(name__icontains=query) | Q(description__icontains=query))[:10]
         serializer = IngredientSearchSerializer(ingredients, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=["post"])
+    def from_barcode(self, request):
+        """The caller's ingredient for a scanned barcode; created from Open Food Facts on first scan."""
+        code = str(request.data.get("barcode", "")).strip()
+        if not code.isdigit():
+            return Response({"detail": "barcode must be digits"}, status=status.HTTP_400_BAD_REQUEST)
+        codes = {code, code.zfill(13)}  # scanners read UPC-A as 12 digits, Open Food Facts stores 13
+        mine = Ingredient.objects.filter(created_by=request.user, is_personal=True, barcode__in=codes).first()
+        if mine:
+            return Response(self.get_serializer(mine).data)
+        product = Product.objects.filter(code__in=codes, obsolete=False).first()
+        if product is None:
+            return Response({"detail": "Unknown barcode", "barcode": code}, status=status.HTTP_404_NOT_FOUND)
+        name = " ".join(filter(None, [product.name, product.brands and f"({product.brands})"])) or product.code
+        if product.energy_kcal is None:
+            return Response(
+                {"detail": "No nutrition facts for this product", "barcode": product.code, "name": name},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
+        ingredient = Ingredient.objects.create(
+            name=name[:255],
+            barcode=product.code,
+            calories=product.energy_kcal,
+            proteins=product.proteins or 0,
+            fats=product.fat or 0,
+            carbs=product.carbohydrates or 0,
+            fibers=product.fiber,
+            sugars=product.sugars,
+            description=f"Open Food Facts, per {product.per}",
+            is_personal=True,
+            created_by=request.user,
+        )
+        return Response(self.get_serializer(ingredient).data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=["get"])
     def personal(self, request):

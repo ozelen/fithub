@@ -28,9 +28,7 @@ class Diet(models.Model):
     def save(self, *args, **kwargs):
         # Ensure only one diet is active per user
         if self.is_active:
-            Diet.objects.filter(user=self.user, is_active=True).exclude(
-                id=self.id
-            ).update(is_active=False)
+            Diet.objects.filter(user=self.user, is_active=True).exclude(id=self.id).update(is_active=False)
         super().save(*args, **kwargs)
 
 
@@ -41,16 +39,12 @@ class Meal(models.Model):
     plan_day = models.PositiveSmallIntegerField(
         null=True, blank=True, help_text="Day template number within the diet rotation"
     )
-    order = models.PositiveSmallIntegerField(
-        null=True, blank=True, help_text="Meal number within the day"
-    )
+    order = models.PositiveSmallIntegerField(null=True, blank=True, help_text="Meal number within the day")
 
     # Calendar scheduling
     is_scheduled = models.BooleanField(default=False)
     start_date = models.DateField(null=True, blank=True)
-    end_date = models.DateField(
-        null=True, blank=True, help_text="End date for recurrent meals"
-    )
+    end_date = models.DateField(null=True, blank=True, help_text="End date for recurrent meals")
     start_time = models.TimeField(null=True, blank=True)
     duration_minutes = models.IntegerField(default=30)
 
@@ -63,9 +57,7 @@ class Meal(models.Model):
         ("weekend", "Weekends (Sat-Sun)"),
         ("custom", "Custom"),
     ]
-    recurrence_type = models.CharField(
-        max_length=10, choices=RECURRENCE_TYPES, default="none"
-    )
+    recurrence_type = models.CharField(max_length=10, choices=RECURRENCE_TYPES, default="none")
     recurrence_until = models.DateField(null=True, blank=True)
 
     # Google Calendar integration
@@ -138,9 +130,7 @@ class Category(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=255)
-    category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, null=True, blank=True
-    )
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
     proteins = models.FloatField()
     fats = models.FloatField()
     carbs = models.FloatField()
@@ -148,12 +138,9 @@ class Ingredient(models.Model):
     fibers = models.FloatField(null=True, blank=True)
     sugars = models.FloatField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    is_personal = models.BooleanField(
-        default=False, help_text="Personal ingredient created by user"
-    )
-    created_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, null=True, blank=True
-    )
+    barcode = models.CharField(max_length=64, blank=True, default="", db_index=True)
+    is_personal = models.BooleanField(default=False, help_text="Personal ingredient created by user")
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -189,6 +176,10 @@ class MealRecord(models.Model):
     fats = models.FloatField(null=True, blank=True)
 
     # Common fields
+    # What was eaten: [{ingredient_id, name, grams, calories, proteins, fats, carbs}], nutrients for those grams.
+    # A snapshot, so editing an ingredient later does not rewrite the day.
+    items = models.JSONField(default=list, blank=True)
+
     timestamp = models.DateTimeField()
     photo = models.ImageField(upload_to="meal_photos/", null=True, blank=True)
     feedback = models.TextField(null=True, blank=True)
@@ -196,14 +187,14 @@ class MealRecord(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        if self.meal:
+        if self.meal and not self.items:
             return f"{self.meal.name} - {self.timestamp}"
         else:
             return f"{self.meal_name} - {self.timestamp}"
 
     def get_total_calories(self):
         """Get total calories for this meal record"""
-        if self.meal:
+        if self.meal and not self.items:
             # Calculate from meal ingredients
             total = 0
             for meal_ingredient in self.meal.mealingredient_set.all():
@@ -216,7 +207,7 @@ class MealRecord(models.Model):
 
     def get_total_proteins(self):
         """Get total proteins for this meal record"""
-        if self.meal:
+        if self.meal and not self.items:
             total = 0
             for meal_ingredient in self.meal.mealingredient_set.all():
                 ratio = meal_ingredient.quantity / 100
@@ -227,7 +218,7 @@ class MealRecord(models.Model):
 
     def get_total_carbs(self):
         """Get total carbs for this meal record"""
-        if self.meal:
+        if self.meal and not self.items:
             total = 0
             for meal_ingredient in self.meal.mealingredient_set.all():
                 ratio = meal_ingredient.quantity / 100
@@ -238,7 +229,7 @@ class MealRecord(models.Model):
 
     def get_total_fats(self):
         """Get total fats for this meal record"""
-        if self.meal:
+        if self.meal and not self.items:
             total = 0
             for meal_ingredient in self.meal.mealingredient_set.all():
                 ratio = meal_ingredient.quantity / 100
